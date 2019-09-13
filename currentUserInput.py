@@ -51,7 +51,8 @@ def start_app():
 
         elif user_selection == 6:
             #TODO: preferences_to_list function
-            draw_table("preferences", preferences_dict, 2)
+            preferences_data = ids_to_data(preferences_dict, people_dict, drinks_dict)
+            draw_table("preferences", preferences_data, 2)
 
         elif user_selection == 7:
             draw_table("preferences", preferences_dict, 2)
@@ -119,12 +120,12 @@ def start_dict(filename):
     dictionary = {}
     file = open(filename, "r")
     for item in file.readlines():
-        print("Line in text file:", item)
         item = item.strip("\n")
         item = item.split("- ")
-        print("List from text:", item)
         if item[0].isdigit():
             item[0] = int(item[0])
+        if item[1].isdigit():
+            item[1] = int(item[1])
         dictionary.update({item[0]: item[1]})
     file.close()
     return dictionary
@@ -214,7 +215,23 @@ def draw_header(title, cols=1, extra_space=0, largest_index=1):
     print(title.upper())
     draw_line(cols, extra_space, largest_index)
 
-
+def draw_data(data, cols=1):
+    if cols == 1:
+        for item in data:
+            print("-->", item)
+    else:
+        for dataset_num in range(0, len(data)):
+            for item in range(0, largest_list(data)):
+                for list_num in range(0, cols):
+                    if len(data[list_num]) > item:
+                        spacing = separator(data, data[list_num][item])
+                        print("-->", data[list_num][item], end=spacing)
+                    else:
+                        width = find_width(data, cols)
+                        spacing = separator(data)
+                        print("   ", spacing, end="")
+                print()
+            return
 def draw_data(data, cols=1, largest_index=1):
     ids = []
     if cols == 1:
@@ -228,7 +245,12 @@ def draw_data(data, cols=1, largest_index=1):
         ids = "Implementation returning ids is incomplete: draw_data only implemented to return set of ids for " \
               "single-column data "
         for dataset_num in range(0, len(data)):
-            data_list = dict_to_list(data, 2)
+
+            if isinstance(data[dataset_num], dict):
+                data_list = dict_to_list(data, 2)
+            elif isinstance(data[dataset_num], list):
+                data_list = data
+
             for index in range(0, largest_dict(data, cols)):
                 for dict_num in range(0, cols):
                     if len(data[dict_num]) > index:
@@ -283,10 +305,18 @@ def draw_table(title, data, cols=1):
 
     data_list = []
     if cols == 1:
-        data_list += list(data.values())
+        if isinstance(data, dict):
+            list_to_add = list(data.values())
+        elif isinstance(data, list):
+            list_to_add = data
+        data_list += list_to_add
     else:
-        for dictionary in data:
-            data_list.append(list(dictionary.values()))
+        for data_col in data:
+            if isinstance(data_col, dict):
+                list_to_add = list(data_col.values())
+            if isinstance(data_col, list):
+                list_to_add = data_col
+            data_list.append(list_to_add)
 
     extra_space = largest_space(data_list, title, cols)
 
@@ -474,5 +504,21 @@ def edit_menu():
             incorrect_input = False
 
     return possible_options[selected_option]
+
+
+def ids_to_data(preferences_dict, people_dict, drinks_dict):
+    drink_data = []
+    user_data = []
+    for user_id, drink_id in preferences_dict.items():
+        # Could add an exception if drink_id or user_id doesn't match any current value
+        drink_data.append(drinks_dict[drink_id])
+        user_data.append(people_dict[user_id])
+    print("drink_data:", drink_data)
+    print("user_data:", user_data)
+    preference_data = [user_data, drink_data]
+    print(preference_data)
+    input("When you're done checking this, press ENTER")
+    return preference_data
+
 
 start_app()
