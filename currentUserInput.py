@@ -9,7 +9,8 @@ def start_app():
 
     menu_options = {1: "List of people", 2: "List of drinks", 3: "List of people and drinks", 4: "Edit people",
                     5: "Edit drinks", 6: "List of preferences", 7: "Edit preferences", 8: "Exit"}
-
+    edit_list_options = {1: "ADD", 2: "REMOVE"}
+    edit_preferences_options = {1: "ADD/CHANGE", 2: "REMOVE"}
     people_dict = start_dict("people.txt")
     drinks_dict = start_dict("drinks.txt")
     preferences_dict = start_dict("preferences.txt")
@@ -34,20 +35,20 @@ def start_app():
             draw_table("people and drinks", [people_dict, drinks_dict], 2)
 
         elif user_selection == 4:
-            draw_table("people", people_dict)
-            editing_choice = edit_menu()
+            ids = draw_table("people", people_dict)
+            editing_choice = edit_menu(edit_list_options)
             if editing_choice == "ADD":
                 people_dict = add_data("people", people_dict)
             elif editing_choice == "REMOVE":
-                people_dict = remove_data("people", people_dict)
+                people_dict = remove_data("people", people_dict, ids, preferences=preferences_dict)
 
         elif user_selection == 5:
-            draw_table("drinks", drinks_dict)
-            editing_choice = edit_menu()
+            ids = draw_table("drinks", drinks_dict)
+            editing_choice = edit_menu(edit_list_options)
             if editing_choice == "ADD":
                 drinks_dict = add_data("drinks", drinks_dict)
             elif editing_choice == "REMOVE":
-                drinks_dict = remove_data("drinks", drinks_dict)
+                drinks_dict = remove_data("drinks", drinks_dict, ids, preferences=preferences_dict)
 
         elif user_selection == 6:
             preferences_data = ids_to_data(preferences_dict, people_dict, drinks_dict)
@@ -56,8 +57,8 @@ def start_app():
         elif user_selection == 7:
             preferences_data = ids_to_data(preferences_dict, people_dict, drinks_dict)
             draw_table("preferences", preferences_data, 2)
-            editing_choice = edit_menu()
-            if editing_choice == "ADD":
+            editing_choice = edit_menu(edit_preferences_options)
+            if editing_choice == "ADD/CHANGE":
                 preferences_dict = add_preferences(preferences_dict, people_dict, drinks_dict)
             elif editing_choice == "REMOVE":
                 preferences_dict = remove_preferences(preferences_dict, people_dict, drinks_dict)
@@ -217,25 +218,6 @@ def draw_header(title, cols=1, extra_space=0, largest_index=1):
     draw_line(cols, extra_space, largest_index)
 
 
-def draw_data(data, cols=1):
-    if cols == 1:
-        for item in data:
-            print("-->", item)
-    else:
-        for dataset_num in range(0, len(data)):
-            for item in range(0, largest_list(data)):
-                for list_num in range(0, cols):
-                    if len(data[list_num]) > item:
-                        spacing = separator(data, data[list_num][item])
-                        print("-->", data[list_num][item], end=spacing)
-                    else:
-                        width = find_width(data, cols)
-                        spacing = separator(data)
-                        print("   ", spacing, end="")
-                print()
-            return
-
-
 def draw_data(data, cols=1, largest_index=1):
     ids = []
     if cols == 1:
@@ -246,14 +228,13 @@ def draw_data(data, cols=1, largest_index=1):
             ids.append(user_id)
         return ids
     else:
-        ids = "Implementation returning ids is incomplete: draw_data only implemented to return set of ids for " \
-              "single-column data "
         for dataset_num in range(0, len(data)):
-
             if isinstance(data[dataset_num], dict):
                 data_list = dict_to_list(data, 2)
+                ids = list(data[0].keys())
             elif isinstance(data[dataset_num], list):
                 data_list = data
+                ids = "Returning ids for a list of data has not yet been implemented."
 
             for index in range(0, largest_dict(data, cols)):
                 for dict_num in range(0, cols):
@@ -385,7 +366,7 @@ def add_data(data_name, data):
     return data
 
 
-def remove_data(data_name, data, ids):
+def remove_data(data_name, data, ids, preferences):
 
     os.system("clear")
 
@@ -398,8 +379,10 @@ def remove_data(data_name, data, ids):
     if isinstance(data, list):
         for item in removed_data:
             data.remove(item)
+            if item in preferences:
+                preferences.remove(item)
     elif isinstance(data, dict):
-        data = update_data(data_name, removed_data, data, ids, mode="remove")
+        data = update_data(data_name, removed_data, data, ids, mode="remove", preferences=preferences)
 
     return data
 
@@ -444,21 +427,26 @@ def add_preferences(preferences, people_dict, drinks_dict):
         # check whether adding a person who's already in the list would break or just overwrite
 
 
-def remove_preferences(data_name, data, ids):
+def remove_preferences(preferences, people_dict, drinks_dict):
 
     os.system("clear")
 
-    ids = draw_table(data_name, data)
+    preferences_data = ids_to_data(preferences, people_dict, drinks_dict)
+    draw_table("preferences", preferences_data, 2)
+    ids = []
+    for user_id in preferences.keys():
+        ids.append(user_id)
 
-    removed_data = input(f"\nPlease enter the number of the {data_name} you would like to remove, separated by commas: ")
+    removed_data = input(f"\nPlease enter the numbers of the people whose preference you would like to remove, "
+                         f"separated by commas: ")
     print()
     removed_data = number_cleaner(removed_data)
 
-    if isinstance(data, list):
+    if isinstance(preferences, list):
         for item in removed_data:
-            data.remove(item)
-    elif isinstance(data, dict):
-        data = update_data(data_name, removed_data, data, ids, "remove")
+            preferences.remove(item)
+    elif isinstance(preferences, dict):
+        data = update_data("preferences", removed_data, preferences, ids, "remove")
 
     return data
 
@@ -532,7 +520,7 @@ def save_to_file(data_name, data):
     file.close()
 
 
-def update_data(data_name, input_data, dictionary, ids=[], mode="add"):
+def update_data(data_name, input_data, dictionary, ids=[], mode="add", preferences={}):
     highest_id = 0
     if mode == "add":
         for item in input_data:
@@ -546,9 +534,18 @@ def update_data(data_name, input_data, dictionary, ids=[], mode="add"):
     elif mode == "remove":
         for choice in input_data:
             index = choice - 1
+            people = list(preferences.keys())
+            drinks = list(preferences.values())
+            prohibited = list(preferences.keys()) if data_name == "people" else list(preferences.values())
+            if ids[index] in prohibited:
+                print("ERROR: One or more of your selected items cannot be removed.\n")
+                print("Please delete any items from any active preferences before attempting to delete them.\n")
+                print("Please return to Main Menu and try again once your preferences have been amended.\n")
+                return dictionary
             dictionary.pop(ids[index])
 
     save_to_file(data_name, dictionary)
+
     return dictionary
 
 
@@ -571,9 +568,8 @@ def update_data(data_name, input_data, dictionary, ids=[], mode="add"):
     return preferences_dict'''
 
 
-def edit_menu():
-    possible_options = {1: "ADD", 2: "REMOVE"}
-    prompt = "Please enter your selection number. Number [1] to ADD, or [2] to REMOVE: "
+def edit_menu(possible_options):
+    prompt = f"Please enter your selection number. Number [1] to {possible_options[1]}, or [2] to {possible_options[2]}: "
     selected_option = 0
     incorrect_input = True
     while incorrect_input:
