@@ -353,12 +353,9 @@ def name_cleaner(input_data):
 
 
 def number_cleaner(input_data):
-    print("User input:", input_data)
     allowed_characters = [",", " "]
     input_data = ''.join([character for character in input_data if character.isdigit() or character in allowed_characters])
-    print("After join:", input_data)
     input_data = input_data.split(",")
-    print("After split:", input_data)
 
     for index in range(0, len(input_data)):
         item = input_data[index]
@@ -367,7 +364,6 @@ def number_cleaner(input_data):
         item = item.strip("'")
         item = int(item)
         input_data[index] = item
-    print("Final numbers:", input_data)
     return input_data
 
 
@@ -417,18 +413,22 @@ def add_preferences(preferences, people_dict, drinks_dict):
         added_people = input(f"\nPlease enter the numbers of the people you would like to add, separated by commas: ")
         print()
         added_people = number_cleaner(added_people)
-        input("Hit ENTER once you're done checking.")
+
         drink_ids = draw_table("drinks", drinks_dict)
-        added_drinks = input(f"\nPlease enter the numbers of the drinks you would like to add, separated by commas: ")
+        print("(\tPEOPLE SELECTED:\t", end="")
+        for index in added_people:
+            user_id = people_ids[index - 1]
+            print(f"[{index}] {people_dict[user_id]}\t", end="")
+        print(")")
+        added_drinks = input(f"\nPlease enter the numbers of the drinks you would like to assign to each person, "
+                             f"separated by commas: ")
         print()
         added_drinks = number_cleaner(added_drinks)
-        print("Number of added people:", len(added_people), "\nNumber of added drinks:", len(added_drinks))
 
         if len(added_people) == len(added_drinks):
             for index in range(0, len(added_people)):
                 people_id = people_ids[added_people[index] - 1]
                 drink_id = drink_ids[added_drinks[index] - 1]
-                print("Adding:", people_id, ":", drink_id)
                 preferences.update({people_id: drink_id})
 
             save_to_file("preferences", preferences)
@@ -442,7 +442,6 @@ def add_preferences(preferences, people_dict, drinks_dict):
                 return preferences
 
         # check whether adding a person who's already in the list would break or just overwrite
-    #preferences = update_preferences(preferences, added_people, added_drinks, "add")
 
 
 def remove_preferences(data_name, data, ids):
@@ -553,7 +552,7 @@ def update_data(data_name, input_data, dictionary, ids=[], mode="add"):
     return dictionary
 
 
-def update_preferences(preferences_dict, added_people, added_drinks, mode="add"):
+'''def update_preferences(preferences_dict, added_people, added_drinks, mode="add"):
     if mode == "add":
         for person in added_people:
             if highest_id == 0:
@@ -569,7 +568,7 @@ def update_preferences(preferences_dict, added_people, added_drinks, mode="add")
             preferences_dict.pop(ids[index])
 
     save_to_file("preferences", preferences_dict)
-    return preferences_dict
+    return preferences_dict'''
 
 
 def edit_menu():
