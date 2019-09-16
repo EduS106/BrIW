@@ -245,8 +245,8 @@ def draw_data(data, cols=1, largest_index=1):
                         spacing = separator(data_list, data_list[dict_num][index])
                         print(f"[{index + 1}]\t", data_list[dict_num][index], end=spacing+"\t")
                     else:
-                        spacing = " " * find_width(data_list) + " " + "  "*cols
-                        print(" "*largest_index  + "\t" + spacing, end=" "*largest_index + " ")
+                        spacing = " " * find_width(data_list[dict_num]) + " " + "  "*cols
+                        print(" "*largest_index + "\t" + spacing, end=" "*largest_index + "\t")
                 print()
             return ids
 
