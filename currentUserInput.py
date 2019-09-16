@@ -355,7 +355,7 @@ def add_data(data_name, data):
 
     os.system("clear")
 
-    draw_table(data_name, data)
+    ids = draw_table(data_name, data)
 
     added_data = input(f"\nPlease enter the name of the {data_name} you would like to add, separated by commas: ")
     print()
@@ -367,7 +367,7 @@ def add_data(data_name, data):
     if isinstance(data, list):
         data += added_data
     elif isinstance(data, dict):
-        data = update_data(data_name, added_data, data, mode="add")
+        data = update_data(data_name, added_data, data, ids, mode="add")
 
     return data
 
