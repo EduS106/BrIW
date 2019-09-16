@@ -21,6 +21,7 @@ def start_app():
 
         user_selection = draw_menu(menu_options, draw_brIW())
         user_selection = int(user_selection)
+
         if user_selection > len(menu_options) or user_selection <= 0:
             input("\nPlease only enter a number from the options provided. Press 'Enter' to try again.")
             continue
@@ -65,10 +66,12 @@ def start_app():
 
         elif user_selection == 8:
             exit_screen()
+            user_exit = True
 
-        user_exit = not user_continue()
+        if user_selection != 8:
+            input("Press ENTER to return to the Main Menu.")
 
-    exit_screen()
+
 
 
 def draw_brIW():
@@ -242,8 +245,8 @@ def draw_data(data, cols=1, largest_index=1):
                         spacing = separator(data_list, data_list[dict_num][index])
                         print(f"[{index + 1}]\t", data_list[dict_num][index], end=spacing+"\t")
                     else:
-                        spacing = " " * find_width(data_list)
-                        print(" "*largest_index + " " + spacing, end=" "*largest_index + " ")
+                        spacing = " " * find_width(data_list) + " " + "  "*cols
+                        print(" "*largest_index + "\t" + spacing, end=" "*largest_index + " ")
                 print()
             return ids
 
@@ -449,15 +452,6 @@ def remove_preferences(preferences, people_dict, drinks_dict):
         data = update_data("preferences", removed_data, preferences, ids, "remove")
 
     return data
-
-
-def user_continue():
-    keep_going = True
-    user_response = input("Would you like to do something else?\nY/N: ")
-    user_response = user_response.upper()
-    if user_response == "N" or user_response == "NO":
-        keep_going = False
-    return keep_going
 
 
 def exit_screen():
