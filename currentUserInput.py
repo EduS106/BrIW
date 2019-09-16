@@ -246,7 +246,7 @@ def draw_data(data, cols=1, largest_index=1):
                         print(f"[{index + 1}]\t", data_list[dict_num][index], end=spacing+"\t")
                     else:
                         spacing = " " * find_width(data_list) + " " + "  "*cols
-                        print(" "*largest_index + "\t" + spacing, end=" "*largest_index + " ")
+                        print(" "*largest_index  + "\t" + spacing, end=" "*largest_index + " ")
                 print()
             return ids
 
@@ -359,7 +359,10 @@ def add_data(data_name, data):
 
     added_data = input(f"\nPlease enter the name of the {data_name} you would like to add, separated by commas: ")
     print()
-    added_data = name_cleaner(added_data)
+    if added_data.strip() != "" and not added_data.isdigit():
+        added_data = name_cleaner(added_data)
+    else:
+        return data
 
     if isinstance(data, list):
         data += added_data
@@ -377,7 +380,11 @@ def remove_data(data_name, data, ids, preferences):
 
     removed_data = input(f"\nPlease enter the number of the {data_name} you would like to remove, separated by commas: ")
     print()
-    removed_data = number_cleaner(removed_data)
+
+    if removed_data.strip() != "" and not removed_data.isalpha():
+        removed_data = number_cleaner(removed_data)
+    else:
+        return data
 
     if isinstance(data, list):
         for item in removed_data:
@@ -398,7 +405,10 @@ def add_preferences(preferences, people_dict, drinks_dict):
         people_ids = draw_table("people", people_dict)
         added_people = input(f"\nPlease enter the numbers of the people you would like to add, separated by commas: ")
         print()
-        added_people = number_cleaner(added_people)
+        if added_people.strip() != "" and not added_people.isalpha():
+            added_people = number_cleaner(added_people)
+        else:
+            return preferences
 
         drink_ids = draw_table("drinks", drinks_dict)
         print("(\tPEOPLE SELECTED:\t", end="")
@@ -409,7 +419,10 @@ def add_preferences(preferences, people_dict, drinks_dict):
         added_drinks = input(f"\nPlease enter the numbers of the drinks you would like to assign to each person, "
                              f"separated by commas: ")
         print()
-        added_drinks = number_cleaner(added_drinks)
+        if added_drinks.strip() != "" and not added_drinks.isalpha():
+            added_drinks = number_cleaner(added_drinks)
+        else:
+            return preferences
 
         if len(added_people) == len(added_drinks):
             for index in range(0, len(added_people)):
@@ -443,7 +456,10 @@ def remove_preferences(preferences, people_dict, drinks_dict):
     removed_data = input(f"\nPlease enter the numbers of the people whose preference you would like to remove, "
                          f"separated by commas: ")
     print()
-    removed_data = number_cleaner(removed_data)
+    if removed_data.strip() != "" and not removed_data.isalpha():
+        removed_data = number_cleaner(removed_data)
+    else:
+        return preferences
 
     if isinstance(preferences, list):
         for item in removed_data:
