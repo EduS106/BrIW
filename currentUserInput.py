@@ -340,14 +340,23 @@ def number_cleaner(input_data):
     allowed_characters = [",", " "]
     input_data = ''.join([character for character in input_data if character.isdigit() or character in allowed_characters])
     input_data = input_data.split(",")
+    invalid_entries = {}
 
     for index in range(0, len(input_data)):
         item = input_data[index]
         item = item.strip()
         item = item.strip('"')
         item = item.strip("'")
-        item = int(item)
-        input_data[index] = item
+        if item != "":
+            item = int(item)
+            input_data[index] = item
+        else:
+            invalid_entries.update({index: input_data[index]})
+    print(f"Invalid entries: {invalid_entries}\nType of invalid entries: {type(invalid_entries)}")
+    for invalid_index, invalid_item in invalid_entries.items():
+        print(f"The following invalid entry was ignored: Entry Number {invalid_index + 1}")
+        input_data.remove(invalid_item)
+
     return input_data
 
 
@@ -359,9 +368,10 @@ def add_data(data_name, data):
 
     added_data = input(f"\nPlease enter the name of the {data_name} you would like to add, separated by commas: ")
     print()
-    if added_data.strip() != "" and not added_data.isdigit():
-        added_data = name_cleaner(added_data)
-    else:
+
+    added_data = name_cleaner(added_data)
+
+    if added_data == "":
         return data
 
     if isinstance(data, list):
@@ -381,16 +391,12 @@ def remove_data(data_name, data, ids, preferences):
     removed_data = input(f"\nPlease enter the number of the {data_name} you would like to remove, separated by commas: ")
     print()
 
-    if removed_data.strip() != "" and not removed_data.isalpha():
-        removed_data = number_cleaner(removed_data)
-    else:
-        return data
+    removed_data = number_cleaner(removed_data)
 
     if isinstance(data, list):
         for item in removed_data:
-            data.remove(item)
-            if item in preferences:
-                preferences.remove(item)
+            if item < len(data):
+                removed_data.remove(item)
     elif isinstance(data, dict):
         data = update_data(data_name, removed_data, data, ids, mode="remove", preferences=preferences)
 
@@ -438,6 +444,7 @@ def add_preferences(preferences, people_dict, drinks_dict):
                          "Press ENTER to try again, or [X] to exit: ")
             back = back.strip()
             if back.upper() == "X":
+                print()
                 return preferences
 
         # check whether adding a person who's already in the list would break or just overwrite
@@ -538,21 +545,26 @@ def update_data(data_name, input_data, dictionary, ids=[], mode="add", preferenc
                 for user_id in ids:
                     if user_id > highest_id:
                         highest_id = user_id
-            new_entry = {highest_id+1: item}
-            dictionary.update(new_entry)
-            highest_id += 1
+            if item != "":
+                new_entry = {highest_id+1: item}
+                dictionary.update(new_entry)
+                highest_id += 1
     elif mode == "remove":
+        for item in input_data:
+            if item > len(ids):
+                input_data.remove(item)
+                print(f"Entry out of range. Ignored the following entries: {item}")
         for choice in input_data:
             index = choice - 1
             people = list(preferences.keys())
             drinks = list(preferences.values())
             prohibited = list(preferences.keys()) if data_name == "people" else list(preferences.values())
             if ids[index] in prohibited:
-                print("ERROR: One or more of your selected items cannot be removed.\n")
-                print("Please delete any items from any active preferences before attempting to delete them.\n")
-                print("Please return to Main Menu and try again once your preferences have been amended.\n")
-                return dictionary
-            dictionary.pop(ids[index])
+                print("\nERROR: One or more of your selected items cannot be removed. These have been ignored.")
+                print("Please delete any items from any active preferences before attempting to delete them.")
+                print("Please return to Main Menu and try again once your preferences have been amended.")
+            else:
+                dictionary.pop(ids[index])
 
     save_to_file(data_name, dictionary)
 
