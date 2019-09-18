@@ -1,7 +1,7 @@
 #!/Users/ehsc1997/anaconda3/bin/python3
 import os
 import sys
-
+from file_handler import *
 
 def start_app():
 
@@ -128,21 +128,6 @@ def draw_menu(menu_options, drawing="", message="Please enter the number of your
     return user_selection
 
 
-def start_dict(filename):
-    dictionary = {}
-    file = open(filename, "r")
-    for item in file.readlines():
-        item = item.strip("\n")
-        item = item.split("- ")
-        if item[0].isdigit():
-            item[0] = int(item[0])
-        if item[1].isdigit():
-            item[1] = int(item[1])
-        dictionary.update({item[0]: item[1]})
-    file.close()
-    return dictionary
-
-
 def find_width(data, cols=1):
 
     largest_item = 0
@@ -177,22 +162,6 @@ def largest_dict(dict_set, cols=1):
             if dict_length > longest_dict:
                 longest_dict = dict_length
     return longest_dict
-
-
-'''
-def largest_space(data, cols=1):
-    if cols == 1:
-        return 0
-    else:
-        for dataset_num in range(0, len(data)):
-            largest_space = 0
-            for list_num in range(0, len(data[dataset_num])):
-                for item in range(0, cols):
-                    if len(data[item]) > list_num:
-                        spacing = separator(data, data[item][list_num])
-                        if len(spacing) > largest_space:
-                            largest_space = len(spacing)
-            return largest_space'''
 
 
 def largest_space(data, title, cols=1):
@@ -546,7 +515,7 @@ Copyright: Eduardo Salazar, 2019"""
     exit()
 
 
-def save_to_file(data_name, data):
+'''def save_to_file(data_name, data):
     if data_name == "people":
         file = open("people.txt", "w")
     elif data_name == "drinks":
@@ -559,7 +528,7 @@ def save_to_file(data_name, data):
     for key in data:
         file.write(str(key) + "- " + str(data[key]) + "\n")
 
-    file.close()
+    file.close()'''
 
 
 def update_data_add(input_data, ids, dictionary):
@@ -610,7 +579,7 @@ def update_data(data_name, input_data, dictionary, ids=[], mode="add", preferenc
     return dictionary
 
 
-'''def update_preferences(preferences_dict, added_people, added_drinks, mode="add"):
+def update_preferences(preferences_dict, added_people, added_drinks, mode="add"):
     if mode == "add":
         for person in added_people:
             if highest_id == 0:
@@ -626,7 +595,7 @@ def update_data(data_name, input_data, dictionary, ids=[], mode="add", preferenc
             preferences_dict.pop(ids[index])
 
     save_to_file("preferences", preferences_dict)
-    return preferences_dict'''
+    return preferences_dict
 
 
 def edit_menu(possible_options):
@@ -655,6 +624,7 @@ def ids_to_data(preferences_dict, people_dict, drinks_dict):
     preference_data = [user_data, drink_data]
 
     return preference_data
+
 
 if __name__ == "__main__":
     start_app()
