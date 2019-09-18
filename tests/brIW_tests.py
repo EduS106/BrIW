@@ -1,6 +1,6 @@
 import unittest
 import unittest.mock
-from currentUserInput import *
+from source.app import *
 
 
 class TestSuite(unittest.TestCase):

@@ -1,7 +1,7 @@
 #!/Users/ehsc1997/anaconda3/bin/python3
 import os
 import sys
-from file_handler import *
+from source.file_handler import start_dict, save_to_file
 
 def start_app():
 
@@ -9,11 +9,16 @@ def start_app():
 
     menu_options = {1: "List of people", 2: "List of drinks", 3: "List of people and drinks", 4: "Edit people",
                     5: "Edit drinks", 6: "List of preferences", 7: "Edit preferences", 8: "Exit"}
+
     edit_list_options = {1: "ADD", 2: "REMOVE"}
+
     edit_preferences_options = {1: "ADD/CHANGE", 2: "REMOVE"}
-    people_dict = start_dict("people.txt")
-    drinks_dict = start_dict("drinks.txt")
-    preferences_dict = start_dict("preferences.txt")
+
+    filepath = "data/"
+
+    people_dict = start_dict(filepath + "people.txt")
+    drinks_dict = start_dict(filepath + "drinks.txt")
+    preferences_dict = start_dict(filepath + "preferences.txt")
 
     while not user_exit:
 

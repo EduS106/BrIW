@@ -15,11 +15,11 @@ def start_dict(filename):
 
 def save_to_file(data_name, data):
     if data_name == "people":
-        file = open("people.txt", "w")
+        file = open("data/people.txt", "w")
     elif data_name == "drinks":
-        file = open("drinks.txt", "w")
+        file = open("data/drinks.txt", "w")
     elif data_name == "preferences":
-        file = open("preferences.txt", "w")
+        file = open("data/preferences.txt", "w")
     else:
         raise Exception("Error: only supports 'people', 'drinks' and 'preference' for data_name string literal")
 
