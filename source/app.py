@@ -3,6 +3,7 @@ import os
 import sys
 from source.file_handler import start_dict, save_to_file
 
+
 def start_app():
 
     user_exit = False
