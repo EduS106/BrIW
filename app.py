@@ -27,15 +27,19 @@ def start_app():
             continue
 
         elif user_selection == 1:
+            os.system("clear")
             draw_table("people", people_dict)
 
         elif user_selection == 2:
+            os.system("clear")
             draw_table("drinks", drinks_dict)
 
         elif user_selection == 3:
+            os.system("clear")
             draw_table("people and drinks", [people_dict, drinks_dict], 2)
 
         elif user_selection == 4:
+            os.system("clear")
             ids = draw_table("people", people_dict)
             editing_choice = edit_menu(edit_list_options)
             if editing_choice == "ADD":
@@ -44,6 +48,7 @@ def start_app():
                 people_dict = remove_data("people", people_dict, ids, preferences=preferences_dict)
 
         elif user_selection == 5:
+            os.system("clear")
             ids = draw_table("drinks", drinks_dict)
             editing_choice = edit_menu(edit_list_options)
             if editing_choice == "ADD":
@@ -52,10 +57,12 @@ def start_app():
                 drinks_dict = remove_data("drinks", drinks_dict, ids, preferences=preferences_dict)
 
         elif user_selection == 6:
+            os.system("clear")
             preferences_data = ids_to_data(preferences_dict, people_dict, drinks_dict)
             draw_table("preferences", preferences_data, 2)
 
         elif user_selection == 7:
+            os.system("clear")
             preferences_data = ids_to_data(preferences_dict, people_dict, drinks_dict)
             draw_table("preferences", preferences_data, 2)
             editing_choice = edit_menu(edit_preferences_options)
@@ -289,8 +296,6 @@ def dict_to_list(data, cols=1):
 
 def draw_table(title, data, cols=1):
 
-    os.system('clear')
-
     data_list = []
     if cols == 1:
         if isinstance(data, dict):
@@ -352,9 +357,9 @@ def number_cleaner(input_data):
             input_data[index] = item
         else:
             invalid_entries.update({index: input_data[index]})
-    print(f"Invalid entries: {invalid_entries}\nType of invalid entries: {type(invalid_entries)}")
+
     for invalid_index, invalid_item in invalid_entries.items():
-        print(f"The following invalid entry was ignored: Entry Number {invalid_index + 1}")
+        print(f"The following invalid entry was ignored: Entry Number {invalid_index + 1}\n")
         input_data.remove(invalid_item)
 
     return input_data
@@ -382,7 +387,7 @@ def add_data(data_name, data):
     return data
 
 
-def remove_data(data_name, data, ids, preferences):
+def remove_data(data_name, data, preferences):
 
     os.system("clear")
 
@@ -403,46 +408,65 @@ def remove_data(data_name, data, ids, preferences):
     return data
 
 
-def add_preferences(preferences, people_dict, drinks_dict):
+def preferences_add_menu(data_name, dictionary):
+
+    ids = draw_table(data_name, dictionary)
+
+    added_data = input(f"\nPlease enter the numbers of the {data_name} you would like to add, separated by commas: ")
+    print()
+
+    added_data = number_cleaner(added_data)
+
+    invalid_data = []
+    for item in added_data:
+        if item > len(ids):
+            invalid_data.append(item)
+
+    for invalid_entry in invalid_data:
+        added_data.remove(invalid_entry)
+        input(f"Entry out of range. Ignored the following entry: {invalid_entry}\n\nPress ENTER to continue.\n")
 
     os.system("clear")
 
+    return ids, added_data
+
+
+def add_preferences(preferences, people_dict, drinks_dict):
+
     while True:
-        people_ids = draw_table("people", people_dict)
-        added_people = input(f"\nPlease enter the numbers of the people you would like to add, separated by commas: ")
-        print()
-        if added_people.strip() != "" and not added_people.isalpha():
-            added_people = number_cleaner(added_people)
+
+        people_ids, added_people = preferences_add_menu("people", people_dict)
+
+        if len(added_people) != 0:
+            print("\n(\tPEOPLE SELECTED:\t", end="")
+            for index in added_people:
+                user_id = people_ids[index - 1]
+                print(f"[{index}] {people_dict[user_id]}\t", end="")
+            print(")\n")
+
+            drink_ids, added_drinks = preferences_add_menu("drinks", drinks_dict)
+
+            if len(added_people) == len(added_drinks):
+                for index in range(0, len(added_people)):
+                    people_id = people_ids[added_people[index] - 1]
+                    drink_id = drink_ids[added_drinks[index] - 1]
+                    preferences.update({people_id: drink_id})
+
+                save_to_file("preferences", preferences)
+                return preferences
+
+            else:
+                back = input("You must assign a drink for each person. Please add the same number of people as drinks. "
+                             "Press ENTER to try again, or [X] to exit: ")
+                back = back.strip()
+                os.system("clear")
+                if back.upper() == "X":
+                    print()
+                    return preferences
         else:
-            return preferences
-
-        drink_ids = draw_table("drinks", drinks_dict)
-        print("(\tPEOPLE SELECTED:\t", end="")
-        for index in added_people:
-            user_id = people_ids[index - 1]
-            print(f"[{index}] {people_dict[user_id]}\t", end="")
-        print(")")
-        added_drinks = input(f"\nPlease enter the numbers of the drinks you would like to assign to each person, "
-                             f"separated by commas: ")
-        print()
-        if added_drinks.strip() != "" and not added_drinks.isalpha():
-            added_drinks = number_cleaner(added_drinks)
-        else:
-            return preferences
-
-        if len(added_people) == len(added_drinks):
-            for index in range(0, len(added_people)):
-                people_id = people_ids[added_people[index] - 1]
-                drink_id = drink_ids[added_drinks[index] - 1]
-                preferences.update({people_id: drink_id})
-
-            save_to_file("preferences", preferences)
-            return preferences
-
-        else:
-            back = input("You must assign a drink for each person. Please add the same number of people as drinks. "
-                         "Press ENTER to try again, or [X] to exit: ")
+            back = input("You must select at least 1 person. Press ENTER to try again, or [X] to exit: ")
             back = back.strip()
+            os.system("clear")
             if back.upper() == "X":
                 print()
                 return preferences
@@ -463,6 +487,7 @@ def remove_preferences(preferences, people_dict, drinks_dict):
     removed_data = input(f"\nPlease enter the numbers of the people whose preference you would like to remove, "
                          f"separated by commas: ")
     print()
+
     if removed_data.strip() != "" and not removed_data.isalpha():
         removed_data = number_cleaner(removed_data)
     else:
@@ -537,34 +562,48 @@ def save_to_file(data_name, data):
     file.close()
 
 
-def update_data(data_name, input_data, dictionary, ids=[], mode="add", preferences={}):
+def update_data_add(input_data, ids, dictionary):
     highest_id = 0
+    for item in input_data:
+        if highest_id == 0:
+            for user_id in ids:
+                if user_id > highest_id:
+                    highest_id = user_id
+        if item != "":
+            new_entry = {highest_id + 1: item}
+            dictionary.update(new_entry)
+            highest_id += 1
+
+    return dictionary
+
+
+def update_data_remove(data_name, input_data, ids, dictionary, preferences):
+    for item in input_data:
+        if item > len(ids):
+            input_data.remove(item)
+            print(f"Entry out of range. Ignored the following entries: {item}")
+    for choice in input_data:
+        index = choice - 1
+        people = list(preferences.keys())
+        drinks = list(preferences.values())
+        prohibited = people if data_name == "people" else drinks
+        if ids[index] in prohibited:
+            print("\nERROR: One or more of your selected items cannot be removed. These have been ignored.")
+            print("Please delete any items from any active preferences before attempting to delete them.")
+            print("Please return to Main Menu and try again once your preferences have been amended.")
+        else:
+            dictionary.pop(ids[index])
+
+    return dictionary
+
+
+def update_data(data_name, input_data, dictionary, ids=[], mode="add", preferences={}):
+
     if mode == "add":
-        for item in input_data:
-            if highest_id == 0:
-                for user_id in ids:
-                    if user_id > highest_id:
-                        highest_id = user_id
-            if item != "":
-                new_entry = {highest_id+1: item}
-                dictionary.update(new_entry)
-                highest_id += 1
+        dictionary = update_data_add(input_data, ids, dictionary)
+
     elif mode == "remove":
-        for item in input_data:
-            if item > len(ids):
-                input_data.remove(item)
-                print(f"Entry out of range. Ignored the following entries: {item}")
-        for choice in input_data:
-            index = choice - 1
-            people = list(preferences.keys())
-            drinks = list(preferences.values())
-            prohibited = list(preferences.keys()) if data_name == "people" else list(preferences.values())
-            if ids[index] in prohibited:
-                print("\nERROR: One or more of your selected items cannot be removed. These have been ignored.")
-                print("Please delete any items from any active preferences before attempting to delete them.")
-                print("Please return to Main Menu and try again once your preferences have been amended.")
-            else:
-                dictionary.pop(ids[index])
+        dictionary = update_data_remove(data_name, input_data, ids, dictionary, preferences)
 
     save_to_file(data_name, dictionary)
 
@@ -617,5 +656,5 @@ def ids_to_data(preferences_dict, people_dict, drinks_dict):
 
     return preference_data
 
-
-start_app()
+if __name__ == "__main__":
+    start_app()
