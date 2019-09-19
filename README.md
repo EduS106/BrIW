@@ -3,7 +3,7 @@ A Python text application for creating and distributing your coffees and other d
 
 ## SET UP
 - Ensure you have your SSH keys set up 
-(some instructions can be found [here](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2)
+(some instructions can be found [here](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys--2))
 - Clone the repository to your command line using the SSH (or HTTPS if you don't have an SSH)
 - Run the command: ```pip install -r requirements.txt```
 	
