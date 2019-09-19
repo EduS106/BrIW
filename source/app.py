@@ -1,6 +1,5 @@
 #!/Users/ehsc1997/anaconda3/bin/python3
 import os
-import sys
 from source.file_handler import start_dict, save_to_file
 
 
