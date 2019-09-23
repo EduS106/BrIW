@@ -2,7 +2,6 @@
 import unittest
 import unittest.mock
 from source.app import *
-from source.file_handler import save_to_file,  start_dict
 
 
 class TestSuite(unittest.TestCase):
