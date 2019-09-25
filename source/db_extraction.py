@@ -13,30 +13,64 @@ def connect_db():
     return connection
 
 
-def get_table(table_name):
-    pass
+def add_data(db, table_name, field, data):
+    # data is a list of names or drinks, for example
+    cursor = db.cursor()
+
+    try:
+        for value in data:
+            sql_query = f"INSERT INTO {table_name} ({field}) VALUES (%s);"
+            print(sql_query)
+            cursor.execute(sql_query, (value,))
+
+        db.commit()
+
+    except Exception as e:
+        print(f"The following exception occurred: {e}")
+
+    finally:
+        cursor.close()
 
 
-def add_data(table_name, data):
-    pass
+def update_data(db, table_name, where_field, field_to_set, new_data):
+    # data is a dictionary of the value of the field where you want to set a field value {where_value:added_value}
+    cursor = db.cursor()
 
+    try:
+        for where_value, added_value in new_data.items():
 
-def update_data(table_name, data):
-    pass
+            sql_query = f"UPDATE {table_name} SET {field_to_set}=%s WHERE {where_field}=%s;"
+
+            cursor.execute(sql_query, (added_value, where_value))
+
+        db.commit()
+
+    except Exception as e:
+        print(f"The following exception occurred: {e}")
+
+    finally:
+        cursor.close()
 
 
 def get_preferences():
     pass
 
 
-def initialise_db(db, sql_initialisation_script_path):
+'''def initialise_db(db, sql_initialisation_script_path):
     cursor = db.cursor()
     tables = []
     try:
 
-        sql_query = sql_initialisation_script_path
+        query_file = open(sql_initialisation_script_path, "r")
+        query = query_file.read()
 
-        cursor.execute(sql_query)
+        print("All queries:", query)
+
+        print("Query:", query)
+
+        cursor.execute(query)
+
+        db.commit()
 
         sql_query = "SHOW TABLES"
 
@@ -53,7 +87,7 @@ def initialise_db(db, sql_initialisation_script_path):
         print(f"The following exception occurred:{e}")
 
     finally:
-        cursor.close()
+        cursor.close()'''
 
 
 def make_person_table_from_file(db, filename):
@@ -114,10 +148,9 @@ def add_preferences_from_file(db, filename):
 
     finally:
         cursor.close()
-    pass
 
 
-def print_table(db, table_name):
+def get_table(db, table_name):
 
     table = []
 
@@ -140,5 +173,9 @@ def print_table(db, table_name):
     finally:
         cursor.close()
 
-    print(table)
+    return table
+
+db = connect_db()
+update_data(db, "person", "name", "preference", {"Kieran":131, "Christos":2})
+db.close()
 

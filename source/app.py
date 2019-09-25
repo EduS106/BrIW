@@ -1,6 +1,8 @@
 #!/Users/ehsc1997/anaconda3/bin/python3
 import os
 from source.file_handler import start_dict, save_to_file
+from source.roundObject import Round
+from source.input_cleaner import name_cleaner, number_cleaner
 
 
 def start_app():
@@ -8,17 +10,21 @@ def start_app():
     user_exit = False
 
     menu_options = {1: "List of people", 2: "List of drinks", 3: "List of people and drinks", 4: "Edit people",
-                    5: "Edit drinks", 6: "List of preferences", 7: "Edit preferences", 8: "Exit"}
+                    5: "Edit drinks", 6: "List of preferences", 7: "Edit preferences", 8: "Start round",
+                    9: "View last round", 10: "Exit"}
 
     edit_list_options = {1: "ADD", 2: "REMOVE"}
 
     edit_preferences_options = {1: "ADD/CHANGE", 2: "REMOVE"}
+
+    edit_round_options = {1: "ADD/CHANGE", 2: "REMOVE", 3: "COMPLETE"}
 
     filepath = "data/"
 
     people_dict = start_dict(filepath + "people.txt")
     drinks_dict = start_dict(filepath + "drinks.txt")
     preferences_dict = start_dict(filepath + "preferences.txt")
+    last_order_dict = start_dict(filepath + "last_order.txt")
 
     while not user_exit:
 
@@ -72,15 +78,24 @@ def start_app():
             draw_table("preferences", preferences_data, 2)
             editing_choice = edit_menu(edit_preferences_options)
             if editing_choice == "ADD/CHANGE":
-                preferences_dict = add_preferences(preferences_dict, people_dict, drinks_dict)
+                preferences_dict = add_entries(preferences_dict, "preferences", people_dict, drinks_dict)
             elif editing_choice == "REMOVE":
-                preferences_dict = remove_preferences(preferences_dict, people_dict, drinks_dict)
+                preferences_dict = remove_entries(preferences_dict, "preferences", people_dict, drinks_dict)
 
         elif user_selection == 8:
+            os.system("clear")
+            round_menu(edit_round_options, people_dict, drinks_dict)
+
+        elif user_selection == 9:
+            os.system("clear")
+            last_order_data = ids_to_data(last_order_dict, people_dict, drinks_dict)
+            draw_table("orders", last_order_data, 2)
+
+        elif user_selection == 10:
             exit_screen()
             user_exit = True
 
-        if user_selection != 8:
+        if user_selection != 10:
             input("Press ENTER to return to the Main Menu.")
 
 
@@ -111,15 +126,13 @@ What would you like to do? Choose from the following options:\n'''
 
 
 def draw_menu(menu_options, drawing="", message="Please enter the number of your selection: "):
-    # num_options = len(menu_options) #to add future functionality for a dynamic list in the message and menu_options
-    # is a string array argument
 
     if drawing != "":
         print(drawing)
 
     for option in menu_options:
         print(f"[{option}] {menu_options[option]}")
-        if option == 3 or option == 5 or option == 7:
+        if option == 3 or option == 5 or option == 7 or option == 9:
             print()
     print()
 
@@ -213,6 +226,7 @@ def draw_data(data, cols=1, largest_index=1):
         return ids
     else:
         for dataset_num in range(0, len(data)):
+            data_list = []
             if isinstance(data[dataset_num], dict):
                 data_list = dict_to_list(data, 2)
                 ids = list(data[0].keys())
@@ -224,33 +238,12 @@ def draw_data(data, cols=1, largest_index=1):
                 for dict_num in range(0, cols):
                     if len(data[dict_num]) > index:
                         spacing = separator(data_list, data_list[dict_num][index])
-                        print(f"[{index + 1}]\t", data_list[dict_num][index], end=spacing+"\t")
+                        print(f"[{index + 1}]\t", data_list[dict_num][index], end=spacing+" \t")
                     else:
                         spacing = " " * find_width(data_list) + " " + "  "*cols
-                        print(" "*largest_index + "\t" + spacing, end=" "*largest_index + "\t")
+                        print(" "*largest_index + "\t" + spacing, end=" "*largest_index + " \t")
                 print()
             return ids
-
-
-'''def draw_preferences(data, cols=1):
-    if cols == 1:
-        for item in data:
-            print(f"[{item}]", data[item])
-    else:
-        for dataset_num in range(0, len(data)):
-            for id in range(0, largest_dict(data)):
-                for dict_num in range(0, cols):
-                    if len(data[dict_num]) > id:
-                        print(data[dict_num][id])
-                        spacing = separator(data, data[dict_num][id])
-                        print(f"[{id}]", data[dict_num][id], end=spacing)
-                    else:
-                        width = find_width(data, cols)
-                        spacing = separator(data)
-                        print("   ", spacing, end="")
-                print()
-            return
-'''
 
 
 def draw_footer(cols=1, extra_space=0, largest_index=1):
@@ -279,6 +272,7 @@ def draw_table(title, data, cols=1):
         data_list += list_to_add
     else:
         for data_col in data:
+            list_to_add = []
             if isinstance(data_col, dict):
                 list_to_add = list(data_col.values())
             if isinstance(data_col, list):
@@ -298,54 +292,13 @@ def draw_table(title, data, cols=1):
     return ids
 
 
-def name_cleaner(input_data):
-
-    allowed_characters = [",", " ", "-"]
-    input_data = ''.join([character for character in input_data if character.isalpha() or character in allowed_characters])
-    input_data = input_data.split(",")
-
-    for index in range(0, len(input_data)):
-        item = input_data[index]
-        item = item.strip()
-        item = item.strip('"')
-        item = item.strip("'")
-        item = item.title()
-        input_data[index] = item
-
-    return input_data
-
-
-def number_cleaner(input_data):
-    allowed_characters = [",", " "]
-    input_data = ''.join([character for character in input_data if character.isdigit() or character in allowed_characters])
-    input_data = input_data.split(",")
-    invalid_entries = {}
-
-    for index in range(0, len(input_data)):
-        item = input_data[index]
-        item = item.strip()
-        item = item.strip('"')
-        item = item.strip("'")
-        if item != "":
-            item = int(item)
-            input_data[index] = item
-        else:
-            invalid_entries.update({index: input_data[index]})
-
-    for invalid_index, invalid_item in invalid_entries.items():
-        print(f"The following invalid entry was ignored: Entry Number {invalid_index + 1}\n")
-        input_data.remove(invalid_item)
-
-    return input_data
-
-
 def add_data(data_name, data):
 
     os.system("clear")
 
     ids = draw_table(data_name, data)
 
-    added_data = input(f"\nPlease enter the name of the {data_name} you would like to add, separated by commas: ")
+    added_data = input(f"\nPlease enter the name of the {data_name} you would like to ADD, separated by commas: ")
     print()
 
     added_data = name_cleaner(added_data)
@@ -367,7 +320,7 @@ def remove_data(data_name, data, preferences):
 
     ids = draw_table(data_name, data)
 
-    removed_data = input(f"\nPlease enter the number of the {data_name} you would like to remove, separated by commas: ")
+    removed_data = input(f"\nPlease enter the number of the {data_name} you would like to REMOVE, separated by commas: ")
     print()
 
     removed_data = number_cleaner(removed_data)
@@ -382,11 +335,11 @@ def remove_data(data_name, data, preferences):
     return data
 
 
-def preferences_add_menu(data_name, dictionary):
+def add_entry_menu(data_name, dictionary):
 
     ids = draw_table(data_name, dictionary)
 
-    added_data = input(f"\nPlease enter the numbers of the {data_name} you would like to add, separated by commas: ")
+    added_data = input(f"\nPlease enter the numbers of the {data_name} you would like to ADD/CHANGE, separated by commas: ")
     print()
 
     added_data = number_cleaner(added_data)
@@ -405,29 +358,34 @@ def preferences_add_menu(data_name, dictionary):
     return ids, added_data
 
 
-def add_preferences(preferences, people_dict, drinks_dict):
+def draw_selected_people(people_dict, selected_people, people_ids):
+    print("\n(\tPEOPLE SELECTED:\t", end="")
+    for index in selected_people:
+        user_id = people_ids[index - 1]
+        print(f"[{index}] {people_dict[user_id]} \t", end="")
+    print(")\n")
+
+
+def add_entries(dictionary, dictionary_file, people_dict, drinks_dict):
 
     while True:
 
-        people_ids, added_people = preferences_add_menu("people", people_dict)
+        people_ids, added_people = add_entry_menu("people", people_dict)
 
         if len(added_people) != 0:
-            print("\n(\tPEOPLE SELECTED:\t", end="")
-            for index in added_people:
-                user_id = people_ids[index - 1]
-                print(f"[{index}] {people_dict[user_id]}\t", end="")
-            print(")\n")
 
-            drink_ids, added_drinks = preferences_add_menu("drinks", drinks_dict)
+            draw_selected_people(people_dict, added_people, people_ids)
+
+            drink_ids, added_drinks = add_entry_menu("drinks", drinks_dict)
 
             if len(added_people) == len(added_drinks):
                 for index in range(0, len(added_people)):
                     people_id = people_ids[added_people[index] - 1]
                     drink_id = drink_ids[added_drinks[index] - 1]
-                    preferences.update({people_id: drink_id})
+                    dictionary.update({people_id: drink_id})
 
-                save_to_file("preferences", preferences)
-                return preferences
+                save_to_file(dictionary_file, dictionary)
+                return dictionary
 
             else:
                 back = input("You must assign a drink for each person. Please add the same number of people as drinks. "
@@ -436,42 +394,41 @@ def add_preferences(preferences, people_dict, drinks_dict):
                 os.system("clear")
                 if back.upper() == "X":
                     print()
-                    return preferences
+                    return dictionary
+
         else:
             back = input("You must select at least 1 person. Press ENTER to try again, or [X] to exit: ")
             back = back.strip()
             os.system("clear")
             if back.upper() == "X":
                 print()
-                return preferences
-
-        # check whether adding a person who's already in the list would break or just overwrite
+                return dictionary
 
 
-def remove_preferences(preferences, people_dict, drinks_dict):
+def remove_entries(dictionary, dictionary_name, people_dict, drinks_dict):
 
     os.system("clear")
 
-    preferences_data = ids_to_data(preferences, people_dict, drinks_dict)
-    draw_table("preferences", preferences_data, 2)
+    dictionary_data = ids_to_data(dictionary, people_dict, drinks_dict)
+    draw_table(dictionary_name, dictionary_data, 2)
     ids = []
-    for user_id in preferences.keys():
+    for user_id in dictionary.keys():
         ids.append(user_id)
 
-    removed_data = input(f"\nPlease enter the numbers of the people whose preference you would like to remove, "
+    removed_data = input(f"\nPlease enter the numbers of the people whose {dictionary_name} you would like to REMOVE, "
                          f"separated by commas: ")
     print()
 
     if removed_data.strip() != "" and not removed_data.isalpha():
         removed_data = number_cleaner(removed_data)
     else:
-        return preferences
+        return dictionary
 
-    if isinstance(preferences, list):
+    if isinstance(dictionary, list):
         for item in removed_data:
-            preferences.remove(item)
-    elif isinstance(preferences, dict):
-        data = update_data("preferences", removed_data, preferences, ids, "remove")
+            dictionary.remove(item)
+    elif isinstance(dictionary, dict):
+        data = update_data("preferences", removed_data, dictionary, ids, "remove")
 
     return data
 
@@ -518,22 +475,6 @@ Copyright: Eduardo Salazar, 2019"""
 
     print(exit_message)
     exit()
-
-
-'''def save_to_file(data_name, data):
-    if data_name == "people":
-        file = open("people.txt", "w")
-    elif data_name == "drinks":
-        file = open("drinks.txt", "w")
-    elif data_name == "preferences":
-        file = open("preferences.txt", "w")
-    else:
-        raise Exception("Error: only supports 'people', 'drinks' and 'preference' for data_name string literal")
-
-    for key in data:
-        file.write(str(key) + "- " + str(data[key]) + "\n")
-
-    file.close()'''
 
 
 def update_data_add(input_data, ids, dictionary):
@@ -584,25 +525,6 @@ def update_data(data_name, input_data, dictionary, ids=[], mode="add", preferenc
     return dictionary
 
 
-def update_preferences(preferences_dict, added_people, added_drinks, mode="add"):
-    if mode == "add":
-        for person in added_people:
-            if highest_id == 0:
-                for user_id in ids:
-                    if user_id > highest_id:
-                        highest_id = user_id
-            new_entry = {highest_id+1: item}
-            preferences_dict.update(new_entry)
-            highest_id += 1
-    elif mode == "remove":
-        for choice in input_data:
-            index = choice - 1
-            preferences_dict.pop(ids[index])
-
-    save_to_file("preferences", preferences_dict)
-    return preferences_dict
-
-
 def edit_menu(possible_options):
     prompt = f"Please enter your selection number. Number [1] to {possible_options[1]}, or [2] to {possible_options[2]}: "
     selected_option = 0
@@ -618,17 +540,103 @@ def edit_menu(possible_options):
     return possible_options[selected_option]
 
 
-def ids_to_data(preferences_dict, people_dict, drinks_dict):
+def round_intro(round_instance, drinks_dict):
+    while True:
+        os.system("clear")
+
+        ids = draw_table("drinks", drinks_dict)
+        brewer_drink_id = round_instance.welcome(ids, drinks_dict)
+
+        if brewer_drink_id == -1:
+            continue
+        elif brewer_drink_id == 0:
+            return round_instance
+        else:
+            round_instance.add_order(round_instance.brewer_id, brewer_drink_id)
+            return round_instance
+
+
+def round_menu(menu_options, people_dict, drinks_dict):
+
+    round_instance = initialise_round(people_dict)
+
+    if round_instance == 0:
+        return
+
+    round_instance = round_intro(round_instance, drinks_dict)
+
+    while round_instance.active:
+        os.system("clear")
+        orders_dict = ids_to_data(round_instance.orders, people_dict, drinks_dict)
+
+        draw_table("orders", orders_dict, 2)
+        editing_choice = draw_menu(menu_options)
+
+        os.system("clear")
+
+        if editing_choice == 1:
+            round_instance.orders = add_entries(round_instance.orders, "orders", people_dict, drinks_dict)
+
+        elif editing_choice == 2:
+            round_instance.orders = remove_entries(round_instance.orders, "orders", people_dict, drinks_dict)
+
+        elif editing_choice == 3:
+            final_order = round_instance.close_round()
+            final_order_data = ids_to_data(final_order, people_dict, drinks_dict)
+            print("The final order is:\n")
+            print(final_order)
+            print(drinks_dict)
+            print(people_dict)
+            draw_table("orders", final_order_data, 2)
+            save_to_file("orders", final_order)
+
+        else:
+            input("Please enter a number from the following options. Press ENTER to try again.")
+
+
+def ids_to_data(dictionary, people_dict, drinks_dict):
     drink_data = []
     user_data = []
 
-    for user_id, drink_id in preferences_dict.items():
+    for user_id, drink_id in dictionary.items():
         # Could add an exception if drink_id or user_id doesn't match any current value
         drink_data.append(drinks_dict[drink_id])
         user_data.append(people_dict[user_id])
-    preference_data = [user_data, drink_data]
+    dictionary_data = [user_data, drink_data]
 
-    return preference_data
+    return dictionary_data
+
+
+def initialise_round(people_dict):
+    while True:
+        os.system("clear")
+        ids = draw_table("people", people_dict)
+        brewer_chosen = input('''What number is your name?    
+(If it is not on the list, type X to return to main menu.)
+Name Number: ''')
+        if brewer_chosen.upper() == "X":
+            return 0
+        else:
+            brewer_chosen = number_cleaner(brewer_chosen)
+
+        if len(brewer_chosen) == 1:
+            brewer_index = brewer_chosen[0] - 1
+            if brewer_index < len(ids) and brewer_index != -1:
+                brewer_id = ids[brewer_index]
+                new_round = Round(people_dict[brewer_id], brewer_id)
+                return new_round
+            else:
+                user_exit = input('''Please make sure your name is on the list, please exit and add it if it is not.
+                 
+Press ENTER to try again or type X to exit: ''')
+                if user_exit.upper() == "X":
+                    return 0
+        else:
+            user_exit = input('''Please only enter one number. Do not include words or special characters (!@£$%%^&*).
+    
+Press ENTER to go back and try again, or type X to exit: ''')
+            if user_exit.upper() == "X":
+                return 0
 
 
 if __name__ == "__main__":

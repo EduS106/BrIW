@@ -1,6 +1,11 @@
 def start_dict(filename):
     dictionary = {}
-    file = open(filename, "r")
+    try:
+        file = open(filename, "r")
+    except FileNotFoundError as e:
+        print("Error found:", e, ".\nCreating new file...")
+        file = open(filename, "w+")
+
     for item in file.readlines():
         item = item.strip("\n")
         item = item.split("- ")
@@ -20,8 +25,11 @@ def save_to_file(data_name, data):
         file = open("data/drinks.txt", "w")
     elif data_name == "preferences":
         file = open("data/preferences.txt", "w")
+    elif data_name == "orders":
+        file = open("data/last_order.txt", "w")
     else:
-        raise Exception("Error: only supports 'people', 'drinks' and 'preference' for data_name string literal")
+        print("File not found.\nCreating new file...")
+        file = open(data_name, "w")
 
     for key in data:
         file.write(str(key) + "- " + str(data[key]) + "\n")

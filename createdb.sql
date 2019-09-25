@@ -1,11 +1,9 @@
-use eduardo
-
+use eduardo;
 
 CREATE TABLE drink (
 	drink_id INTEGER AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(100)
 );
-
 
 CREATE TABLE person (
 	person_id INTEGER AUTO_INCREMENT PRIMARY KEY,
@@ -13,7 +11,6 @@ CREATE TABLE person (
 	preference INTEGER,
 	FOREIGN KEY (preference) REFERENCES drink(drink_id)
 );
-
 
 INSERT INTO drink(name) VALUES 
 	("Water"), 
