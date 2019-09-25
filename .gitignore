@@ -131,3 +131,6 @@ dmypy.json
 
 # Virtual Environments
 myVE
+
+# data on text files
+*.txt
