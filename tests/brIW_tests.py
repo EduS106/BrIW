@@ -1,8 +1,6 @@
 #!/Users/ehsc1997/anaconda3/bin/python3
-import unittest
 import unittest.mock
-from source.app import *
-
+from app import *
 
 class TestSuite(unittest.TestCase):
 
