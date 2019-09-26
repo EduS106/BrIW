@@ -43,7 +43,6 @@ Press ENTER to try again or type X to exit: ''')
             else:
                 return -1
 
-
     def add_team_member(self):
         pass
 
@@ -64,6 +63,7 @@ Press ENTER to try again or type X to exit: ''')
         last_order = self.orders.copy()
         self.clear_orders()
         return last_order
+
 
 def test_rounds():
     brewer = input("What is your name?\nName: ")
