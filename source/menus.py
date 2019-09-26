@@ -67,7 +67,7 @@ def edit_menu(possible_options):
     return possible_options[selected_option]
 
 
-def round_menu(menu_options, people_dict, drinks_dict):
+def round_menu(menu_options, people_dict, drinks_dict, last_order_dict):
 
     round_instance = initialise_round(people_dict)
 
@@ -96,10 +96,13 @@ def round_menu(menu_options, people_dict, drinks_dict):
             final_order_data = ids_to_data(final_order, people_dict, drinks_dict)
             print("The final order is:\n")
             draw_table("orders", final_order_data, 2)
+            last_order_dict = final_order
             save_to_file("orders", final_order)
 
         else:
             input("Please enter a number from the following options. Press ENTER to try again.")
+
+    return last_order_dict
 
 
 def round_intro(round_instance, drinks_dict):
@@ -150,29 +153,6 @@ Press ENTER to go back and try again, or type X to exit: ''')
                 return 0
 
 
-def add_entry_menu(data_name, dictionary):
-
-    ids = draw_table(data_name, dictionary)
-
-    added_data = input(f"\nPlease enter the numbers of the {data_name} you would like to ADD/CHANGE, separated by commas: ")
-    print()
-
-    added_data = number_cleaner(added_data)
-
-    invalid_data = []
-    for item in added_data:
-        if item > len(ids):
-            invalid_data.append(item)
-
-    for invalid_entry in invalid_data:
-        added_data.remove(invalid_entry)
-        input(f"Entry out of range. Ignored the following entry: {invalid_entry}\n\nPress ENTER to continue.\n")
-
-    os.system("clear")
-
-    return ids, added_data
-
-
 def exit_screen():
     os.system("clear")
 
@@ -207,8 +187,8 @@ Thanks for using our app, hope you have enjoyed the experience!
 
 Contact us to report bugs, for help or troubleshooting, or just to give us feedback on our app!
 
-Email: ahsc1997@gmail.com
-Phone: 07803407324
+Email: thebriwcompany@coffee.com
+Phone: 07180350283
 
 Copyright: Eduardo Salazar, 2019"""
 

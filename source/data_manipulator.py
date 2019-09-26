@@ -2,7 +2,6 @@ from source.file_handler import save_to_file
 from source.data_viewer import draw_table, draw_selected_people
 from source.input_cleaner import name_cleaner, number_cleaner
 from source.data_converter import ids_to_data
-from source.menus import add_entry_menu
 import os
 
 
@@ -97,36 +96,7 @@ def update_data_remove(data_name, input_data, ids, dictionary, preferences):
     return dictionary
 
 
-def remove_entries(dictionary, dictionary_name, people_dict, drinks_dict):
-
-    os.system("clear")
-
-    dictionary_data = ids_to_data(dictionary, people_dict, drinks_dict)
-    draw_table(dictionary_name, dictionary_data, 2)
-    ids = []
-    for user_id in dictionary.keys():
-        ids.append(user_id)
-
-    removed_data = input(f"\nPlease enter the numbers of the people whose {dictionary_name} you would like to REMOVE, "
-                         f"separated by commas: ")
-    print()
-
-    if removed_data.strip() != "" and not removed_data.isalpha():
-        removed_data = number_cleaner(removed_data)
-    else:
-        return dictionary
-
-    if isinstance(dictionary, list):
-        for item in removed_data:
-            dictionary.remove(item)
-    elif isinstance(dictionary, dict):
-        data = update_data("preferences", removed_data, dictionary, ids, "remove")
-
-    return data
-
-
 def add_entries(dictionary, dictionary_file, people_dict, drinks_dict):
-
     while True:
         os.system("clear")
 
@@ -163,3 +133,54 @@ def add_entries(dictionary, dictionary_file, people_dict, drinks_dict):
             if back.upper() == "X":
                 print()
                 return dictionary
+
+
+def add_entry_menu(data_name, dictionary):
+    ids = draw_table(data_name, dictionary)
+
+    added_data = input(
+        f"\nPlease enter the numbers of the {data_name} you would like to ADD/CHANGE, separated by commas: ")
+    print()
+
+    added_data = number_cleaner(added_data)
+
+    invalid_data = []
+    for item in added_data:
+        if item > len(ids):
+            invalid_data.append(item)
+
+    for invalid_entry in invalid_data:
+        added_data.remove(invalid_entry)
+        input(f"Entry out of range. Ignored the following entry: {invalid_entry}\n\nPress ENTER to continue.\n")
+
+    os.system("clear")
+
+    return ids, added_data
+
+
+def remove_entries(dictionary, dictionary_name, people_dict, drinks_dict):
+
+    os.system("clear")
+
+    dictionary_data = ids_to_data(dictionary, people_dict, drinks_dict)
+    draw_table(dictionary_name, dictionary_data, 2)
+    ids = []
+    for user_id in dictionary.keys():
+        ids.append(user_id)
+
+    removed_data = input(f"\nPlease enter the numbers of the people whose {dictionary_name} you would like to REMOVE, "
+                         f"separated by commas: ")
+    print()
+
+    if removed_data.strip() != "" and not removed_data.isalpha():
+        removed_data = number_cleaner(removed_data)
+    else:
+        return dictionary
+
+    if isinstance(dictionary, list):
+        for item in removed_data:
+            dictionary.remove(item)
+    elif isinstance(dictionary, dict):
+        data = update_data("preferences", removed_data, dictionary, ids, "remove")
+
+    return data

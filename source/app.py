@@ -1,13 +1,10 @@
 #!/Users/ehsc1997/anaconda3/bin/python3
 import os
-from source.round_object import Round
 from source.file_handler import start_dict
 from source.data_viewer import draw_table
-from source.menus import edit_menu, exit_screen, draw_menu, draw_brIW, round_menu
+from source.menus import draw_menu, draw_brIW, edit_menu, round_menu, exit_screen
 from source.data_manipulator import add_data, remove_data, add_entries, remove_entries
 from source.data_converter import ids_to_data
-from source.input_cleaner import number_cleaner
-
 
 
 def start_app():
@@ -89,7 +86,7 @@ def start_app():
 
         elif user_selection == 8:
             os.system("clear")
-            round_menu(edit_round_options, people_dict, drinks_dict)
+            last_order_dict = round_menu(edit_round_options, people_dict, drinks_dict, last_order_dict)
 
         elif user_selection == 9:
             os.system("clear")
