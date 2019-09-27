@@ -100,7 +100,7 @@ def round_menu(menu_options, people_dict, drinks_dict, last_order_dict):
             save_to_file("orders", final_order)
 
         else:
-            input("Please enter a number from the following options. Press ENTER to try again.")
+            input("Please enter a number from the options given. Press ENTER to try again.")
 
     return last_order_dict
 
