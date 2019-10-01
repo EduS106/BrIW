@@ -13,8 +13,10 @@ def connect_db():
     return connection
 
 
-def add_data(db, table_name, field, data):
+def add_data(table_name, field, data):
     # data is a list of names or drinks, for example
+    db = connect_db()
+
     cursor = db.cursor()
 
     try:
@@ -30,10 +32,13 @@ def add_data(db, table_name, field, data):
 
     finally:
         cursor.close()
+        db.close()
 
 
-def update_data(db, table_name, where_field, field_to_set, new_data):
+def update_data(table_name, where_field, field_to_set, new_data):
     # data is a dictionary of the value of the field where you want to set a field value {where_value:added_value}
+    db = connect_db()
+
     cursor = db.cursor()
 
     try:
@@ -50,6 +55,7 @@ def update_data(db, table_name, where_field, field_to_set, new_data):
 
     finally:
         cursor.close()
+        db.close()
 
 
 def get_preferences():
@@ -150,7 +156,9 @@ def add_preferences_from_file(db, filename):
         cursor.close()
 
 
-def get_table(db, table_name):
+def get_table(table_name, field="*"):
+
+    db = connect_db()
 
     table = []
 
@@ -158,7 +166,7 @@ def get_table(db, table_name):
 
     try:
 
-        sql_query = f"select * from {table_name};"
+        sql_query = f"select {field} from {table_name};"
 
         cursor.execute(sql_query)
 
@@ -172,10 +180,7 @@ def get_table(db, table_name):
 
     finally:
         cursor.close()
+        db.close()
 
     return table
-
-db = connect_db()
-update_data(db, "person", "name", "preference", {"Kieran":131, "Christos":2})
-db.close()
 

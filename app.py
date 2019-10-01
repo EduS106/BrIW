@@ -1,4 +1,4 @@
-#!/Users/ehsc1997/anaconda3/bin/python3
+
 import os
 from source.file_handler import start_dict
 from source.data_viewer import draw_table

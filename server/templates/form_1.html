@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BrIW- The Website</title>
+</head>
+<body>
+    {%for item_list in list_list%}
+        <div>
+            <ul>
+                {%for item in item_list%}
+                <li>{{item}}</li>
+                {%endfor%}
+            </ul>
+        </div>
+        <br>
+    {%endfor%}
+
+    <form id="add-person-form"  method="post">
+        <legend>Add new person:</legend>
+        <br>
+        <label for="person-name">Person:</label>
+        <input id="person-name" type="text" name="person-name" required/>
+
+        <label for="drink-name">Drink:</label>
+        <input id="drink-name" type="text" name="drink-name" required/>
+
+        <input id="submit-btn" type="submit" value="Add Person">
+
+        {% if fail %}
+        <h1> Failed to add {{fail}} You can only add a drink on the list!</h1>
+        {%endif%}
+    </form>
+    <script>
+    </script>
+</body>
+</html>
