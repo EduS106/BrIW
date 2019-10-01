@@ -8,7 +8,8 @@ def connect_db():
         environ.get("academyDBhost"),  # host
         environ.get("academyDBuser"),  # username
         environ.get("academyDBpass"),  # password
-        environ.get("academyDB")  # database
+        environ.get("academyDB"),  # database
+        cursorclass=pymysql.cursors.DictCursor
     )
     return connection
 
@@ -184,3 +185,43 @@ def get_table(table_name, field="*"):
 
     return table
 
+
+def table_to_dict(dict_type):
+    output_dictionary = {}
+    if dict_type == "people":
+        people = get_table("person")
+        print(people)
+        for person in people:
+            output_dictionary.update({person["person_id"]: person["name"]})
+    elif dict_type == "drinks":
+        drinks = get_table("drink")
+        for drink in drinks:
+            output_dictionary.update({drink["drink_id"]: drink["name"]})
+    elif dict_type == "preferences":
+        people = get_table("person")
+        for person in people:
+            if person["preference"] is not None:
+                output_dictionary.update({person["person_id"]: person["preference"]})
+    elif dict_type == "orders":
+        orders = get_table("orders")
+        for order in orders:
+            if order["active"]:
+                output_dictionary.update({order["person_id"]: order["drink_id"]})
+    else:
+        print("Invalid argument. Please enter string 'people', 'drinks', 'preferences' or 'orders' as an argument")
+
+    return output_dictionary
+
+
+def save_to_db(data_name, data, mode="add"):
+    if mode == "add":
+        if data_name == "people":
+            add_data("person", "name", data.values())
+        elif data_name == "drinks":
+            add_data("drink", "name", data.values())
+        elif data_name == "preferences":
+            update_data("person", "person_id", "preference", data)
+        elif data_name == "orders":
+            pass
+        else:
+            print("DB table not found. Currently compatible with data_name arguments of: 'people', 'drinks', 'preferences' and 'orders'.")

@@ -1,6 +1,6 @@
 
 import os
-from source.file_handler import start_dict
+from source.db_extraction import table_to_dict
 from source.data_viewer import draw_table
 from source.menus import draw_menu, draw_brIW, edit_menu, round_menu, exit_screen
 from source.data_manipulator import add_data, remove_data, add_entries, remove_entries
@@ -21,12 +21,10 @@ def start_app():
 
     edit_round_options = {1: "ADD/CHANGE", 2: "REMOVE", 3: "COMPLETE"}
 
-    filepath = "data/"
-
-    people_dict = start_dict(filepath + "people.txt")
-    drinks_dict = start_dict(filepath + "drinks.txt")
-    preferences_dict = start_dict(filepath + "preferences.txt")
-    last_order_dict = start_dict(filepath + "last_order.txt")
+    people_dict = table_to_dict("people")
+    drinks_dict = table_to_dict("drinks")
+    preferences_dict = table_to_dict("preferences")
+    last_order_dict = table_to_dict("orders")
 
     while not user_exit:
 
