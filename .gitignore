@@ -104,6 +104,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+myVE
 
 # Spyder project settings
 .spyderproject
@@ -129,10 +130,10 @@ dmypy.json
 # PyCharm Config
 .idea
 
-# Virtual Environments
-myVE
-
 # data
 *.txt
 */data/*
 data/*
+
+# Ansible stuff
+ansible/*
