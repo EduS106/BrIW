@@ -1,7 +1,8 @@
 import os
+from source.file_handler import save_to_file
 from source.data_converter import ids_to_data
 from source.data_viewer import draw_table
-from source.file_handler import save_to_file
+import source.db_extraction as db
 from source.data_manipulator import add_entries, remove_entries
 from source.input_cleaner import number_cleaner
 from source.round_object import Round
@@ -74,7 +75,13 @@ def round_menu(menu_options, people_dict, drinks_dict, last_order_dict):
     if round_instance == 0:
         return
 
+    db.add_data("rounds", "brewer_id", [round_instance.brewer_id])
+    db.update_data("rounds", "brewer_id", "active", {round_instance.brewer_id: 1})
+
     round_instance = round_intro(round_instance, drinks_dict)
+
+    db.add_data("orders", "person_id", round_instance.brewer_id)
+    db.update_data("orders", "person_id", "drink_id", round_instance.orders)
 
     while round_instance.active:
         os.system("clear")
@@ -86,12 +93,14 @@ def round_menu(menu_options, people_dict, drinks_dict, last_order_dict):
         os.system("clear")
 
         if editing_choice == 1:
+            # SOMETHING ABOUT DB.UPDATE OR DB.ADD
             round_instance.orders = add_entries(round_instance.orders, "orders", people_dict, drinks_dict)
 
         elif editing_choice == 2:
             round_instance.orders = remove_entries(round_instance.orders, "orders", people_dict, drinks_dict)
 
         elif editing_choice == 3:
+            db.update_data("rounds", "brewer_id", "active", {round_instance.brewer_id: 0})
             final_order = round_instance.close_round()
             final_order_data = ids_to_data(final_order, people_dict, drinks_dict)
             print("The final order is:\n")

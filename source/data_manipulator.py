@@ -1,4 +1,4 @@
-from source.file_handler import save_to_file
+import source.db_extraction as db
 from source.data_viewer import draw_table, draw_selected_people
 from source.input_cleaner import name_cleaner, number_cleaner
 from source.data_converter import ids_to_data
@@ -51,27 +51,16 @@ def remove_data(data_name, data, preferences):
 def update_data(data_name, input_data, dictionary, ids=[], mode="add", preferences={}):
 
     if mode == "add":
-        dictionary = update_data_add(input_data, ids, dictionary)
+        for item in input_data:
+            if item == "":
+                input_data.remove(item)
+
+        db.add_data(data_name, "name", input_data)
+
+        dictionary = db.table_to_dict(data_name)
 
     elif mode == "remove":
         dictionary = update_data_remove(data_name, input_data, ids, dictionary, preferences)
-
-    save_to_file(data_name, dictionary)
-
-    return dictionary
-
-
-def update_data_add(input_data, ids, dictionary):
-    highest_id = 0
-    for item in input_data:
-        if highest_id == 0:
-            for user_id in ids:
-                if user_id > highest_id:
-                    highest_id = user_id
-        if item != "":
-            new_entry = {highest_id + 1: item}
-            dictionary.update(new_entry)
-            highest_id += 1
 
     return dictionary
 
@@ -89,18 +78,29 @@ def update_data_remove(data_name, input_data, ids, dictionary, preferences):
         if ids[index] in prohibited:
             print("\nERROR: One or more of your selected items cannot be removed. These have been ignored.")
             print("Please delete any items from any active preferences before attempting to delete them.")
-            print("Please return to Main Menu and try again once your preferences have been amended.")
+            print("Please return to Main Menu and try again once your preferences have been amended.\n")
         else:
             dictionary.pop(ids[index])
+            db.remove_data_by_id(data_name, [ids[index]])
 
     return dictionary
 
 
-def add_entries(dictionary, dictionary_file, people_dict, drinks_dict):
+def add_entries(dictionary, mode, people_dict, drinks_dict):
     while True:
         os.system("clear")
 
         people_ids, added_people = add_entry_menu("people", people_dict)
+
+        args = []
+        if mode == "preference":
+            field_to_set = "preference"
+            table_name = "person"
+        elif mode == "orders":
+            field_to_set = "drink_id"
+            table_name = mode
+        else:
+            print("Unsupported mode selected. Please only enter 'preference' or 'orders' mode arguments.")
 
         if len(added_people) != 0:
 
@@ -114,7 +114,8 @@ def add_entries(dictionary, dictionary_file, people_dict, drinks_dict):
                     drink_id = drink_ids[added_drinks[index] - 1]
                     dictionary.update({people_id: drink_id})
 
-                save_to_file(dictionary_file, dictionary)
+                    db.update_data(table_name, "person_id", field_to_set, {people_id: drink_id})
+
                 return dictionary
 
             else:

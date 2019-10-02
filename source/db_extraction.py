@@ -23,7 +23,6 @@ def add_data(table_name, field, data):
     try:
         for value in data:
             sql_query = f"INSERT INTO {table_name} ({field}) VALUES (%s);"
-            print(sql_query)
             cursor.execute(sql_query, (value,))
 
         db.commit()
@@ -57,6 +56,34 @@ def update_data(table_name, where_field, field_to_set, new_data):
     finally:
         cursor.close()
         db.close()
+
+
+def remove_data_by_id(table_name, data):
+    # data is a list of names or drinks, for example
+    db = connect_db()
+
+    cursor = db.cursor()
+
+    if table_name == "preferences":
+        table_name = "person"
+        where_field = "preference"
+    else:
+        where_field = table_name + "_id"
+
+    try:
+        for value in data:
+            sql_query = f"DELETE FROM {table_name} WHERE {where_field}={value};"
+            cursor.execute(sql_query)
+
+        db.commit()
+
+    except Exception as e:
+        print(f"The following exception occurred: {e}")
+
+    finally:
+        cursor.close()
+        db.close()
+
 
 
 def get_preferences():
@@ -188,16 +215,15 @@ def get_table(table_name, field="*"):
 
 def table_to_dict(dict_type):
     output_dictionary = {}
-    if dict_type == "people":
+    if dict_type == "person":
         people = get_table("person")
-        print(people)
         for person in people:
             output_dictionary.update({person["person_id"]: person["name"]})
-    elif dict_type == "drinks":
+    elif dict_type == "drink":
         drinks = get_table("drink")
         for drink in drinks:
             output_dictionary.update({drink["drink_id"]: drink["name"]})
-    elif dict_type == "preferences":
+    elif dict_type == "preference":
         people = get_table("person")
         for person in people:
             if person["preference"] is not None:

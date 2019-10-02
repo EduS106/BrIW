@@ -21,9 +21,9 @@ def start_app():
 
     edit_round_options = {1: "ADD/CHANGE", 2: "REMOVE", 3: "COMPLETE"}
 
-    people_dict = table_to_dict("people")
-    drinks_dict = table_to_dict("drinks")
-    preferences_dict = table_to_dict("preferences")
+    people_dict = table_to_dict("person")
+    drinks_dict = table_to_dict("drink")
+    preferences_dict = table_to_dict("preference")
     last_order_dict = table_to_dict("orders")
 
     while not user_exit:
@@ -38,14 +38,18 @@ def start_app():
             continue
 
         elif user_selection == 1:
+            people_dict = table_to_dict("person")
             os.system("clear")
             draw_table("people", people_dict)
 
         elif user_selection == 2:
+            drinks_dict = table_to_dict("drink")
             os.system("clear")
             draw_table("drinks", drinks_dict)
 
         elif user_selection == 3:
+            people_dict = table_to_dict("person")
+            drinks_dict = table_to_dict("drink")
             os.system("clear")
             draw_table("people and drinks", [people_dict, drinks_dict], 2)
 
@@ -54,20 +58,21 @@ def start_app():
             draw_table("people", people_dict)
             editing_choice = edit_menu(edit_list_options)
             if editing_choice == "ADD":
-                people_dict = add_data("people", people_dict)
+                people_dict = add_data("person", people_dict)
             elif editing_choice == "REMOVE":
-                people_dict = remove_data("people", people_dict, preferences=preferences_dict)
+                people_dict = remove_data("person", people_dict, preferences=preferences_dict)
 
         elif user_selection == 5:
             os.system("clear")
             draw_table("drinks", drinks_dict)
             editing_choice = edit_menu(edit_list_options)
             if editing_choice == "ADD":
-                drinks_dict = add_data("drinks", drinks_dict)
+                drinks_dict = add_data("drink", drinks_dict)
             elif editing_choice == "REMOVE":
-                drinks_dict = remove_data("drinks", drinks_dict, preferences=preferences_dict)
+                drinks_dict = remove_data("drink", drinks_dict, preferences=preferences_dict)
 
         elif user_selection == 6:
+            preferences_dict = table_to_dict("preference")
             os.system("clear")
             preferences_data = ids_to_data(preferences_dict, people_dict, drinks_dict)
             draw_table("preferences", preferences_data, 2)
@@ -78,15 +83,16 @@ def start_app():
             draw_table("preferences", preferences_data, 2)
             editing_choice = edit_menu(edit_preferences_options)
             if editing_choice == "ADD/CHANGE":
-                preferences_dict = add_entries(preferences_dict, "preferences", people_dict, drinks_dict)
+                preferences_dict = add_entries(preferences_dict, "preference", people_dict, drinks_dict)
             elif editing_choice == "REMOVE":
-                preferences_dict = remove_entries(preferences_dict, "preferences", people_dict, drinks_dict)
+                preferences_dict = remove_entries(preferences_dict, "preference", people_dict, drinks_dict)
 
         elif user_selection == 8:
             os.system("clear")
             last_order_dict = round_menu(edit_round_options, people_dict, drinks_dict, last_order_dict)
 
         elif user_selection == 9:
+            last_order_dict = table_to_dict("orders")
             os.system("clear")
             last_order_data = ids_to_data(last_order_dict, people_dict, drinks_dict)
             draw_table("orders", last_order_data, 2)
