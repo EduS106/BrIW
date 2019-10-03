@@ -11,7 +11,7 @@
         <table>
             {%for i in range(item_list|length)%}
             <tr>
-                <td class="name">{{i}}. {{item_list[i][0]}}</td>
+                <td class="name">{{i}}. {{item_list[i]["name"]}}</td>
             </tr>
             {%endfor%}
         </table>

@@ -65,42 +65,35 @@ def update_data(data_name, input_data, dictionary, ids=[], mode="add", preferenc
     return dictionary
 
 
-def update_data_remove(data_name, input_data, ids, dictionary, preferences):
+def update_data_remove(data_name, input_data, ids, dictionary):
     for item in input_data:
         if item > len(ids):
             input_data.remove(item)
             print(f"Entry out of range. Ignored the following entries: {item}")
     for choice in input_data:
         index = choice - 1
-        people = list(preferences.keys())
-        drinks = list(preferences.values())
-        prohibited = people if data_name == "people" else drinks
-        if ids[index] in prohibited:
-            print("\nERROR: One or more of your selected items cannot be removed. These have been ignored.")
-            print("Please delete any items from any active preferences before attempting to delete them.")
-            print("Please return to Main Menu and try again once your preferences have been amended.\n")
+
+        if data_name == "preferences":
+            try:
+                db.update_data("person", "person_id", "preference", {ids[index]: None})
+                dictionary.pop(ids[index])
+            except Exception as e:
+                print("The following exception occurred:", e)
+                input("Press ENTER to continue.")
+        elif data_name == "orders":
+            try:
+                db.remove_order(ids[index], db.get_round_id())
+                dictionary.pop(ids[index])
+            except Exception as e:
+                print("The following exception occurred:", e)
+                input("Press ENTER to continue.")
         else:
-            if data_name == "preferences":
-                try:
-                    db.update_data("person", "person_id", "preference", {ids[index]: None})
-                    dictionary.pop(ids[index])
-                except Exception as e:
-                    print("The following exception occurred:", e)
-                    input("Press ENTER to continue.")
-            elif data_name == "orders":
-                try:
-                    db.remove_order(ids[index], db.get_round_id())
-                    dictionary.pop(ids[index])
-                except Exception as e:
-                    print("The following exception occurred:", e)
-                    input("Press ENTER to continue.")
-            else:
-                try:
-                    db.remove_data_by_id(data_name, [ids[index]])
-                    dictionary.pop(ids[index])
-                except Exception as e:
-                    print("The following exception occurred:", e)
-                    input("Press ENTER to continue.")
+            try:
+                db.remove_data_by_id(data_name, [ids[index]])
+                dictionary.pop(ids[index])
+            except Exception as e:
+                print("The following exception occurred:", e)
+                input("Press ENTER to continue.")
 
     return dictionary
 

@@ -10,6 +10,8 @@ def form_example():
         people = get_table("person", "name")
         drinks = get_table("drink", "name")
         the_list = [people, drinks]
+        print(people)
+        print(drinks)
         return render_template('index.html', item_list=people)
 
     elif request.method == "POST":
