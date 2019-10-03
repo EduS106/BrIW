@@ -80,8 +80,27 @@ def update_data_remove(data_name, input_data, ids, dictionary, preferences):
             print("Please delete any items from any active preferences before attempting to delete them.")
             print("Please return to Main Menu and try again once your preferences have been amended.\n")
         else:
-            dictionary.pop(ids[index])
-            db.remove_data_by_id(data_name, [ids[index]])
+            if data_name == "preferences":
+                try:
+                    db.update_data("person", "person_id", "preference", {ids[index]: None})
+                    dictionary.pop(ids[index])
+                except Exception as e:
+                    print("The following exception occurred:", e)
+                    input("Press ENTER to continue.")
+            elif data_name == "orders":
+                try:
+                    db.remove_order(ids[index], db.get_round_id())
+                    dictionary.pop(ids[index])
+                except Exception as e:
+                    print("The following exception occurred:", e)
+                    input("Press ENTER to continue.")
+            else:
+                try:
+                    db.remove_data_by_id(data_name, [ids[index]])
+                    dictionary.pop(ids[index])
+                except Exception as e:
+                    print("The following exception occurred:", e)
+                    input("Press ENTER to continue.")
 
     return dictionary
 
@@ -92,15 +111,9 @@ def add_entries(dictionary, mode, people_dict, drinks_dict):
 
         people_ids, added_people = add_entry_menu("people", people_dict)
 
-        args = []
-        if mode == "preference":
+        if mode == "preferences":
             field_to_set = "preference"
             table_name = "person"
-        elif mode == "orders":
-            field_to_set = "drink_id"
-            table_name = mode
-        else:
-            print("Unsupported mode selected. Please only enter 'preference' or 'orders' mode arguments.")
 
         if len(added_people) != 0:
 
@@ -114,7 +127,10 @@ def add_entries(dictionary, mode, people_dict, drinks_dict):
                     drink_id = drink_ids[added_drinks[index] - 1]
                     dictionary.update({people_id: drink_id})
 
-                    db.update_data(table_name, "person_id", field_to_set, {people_id: drink_id})
+                    if mode == "orders":
+                        db.add_order(people_id, drink_id, db.get_round_id())
+                    else:
+                        db.update_data(table_name, "person_id", field_to_set, {people_id: drink_id})
 
                 return dictionary
 
@@ -182,6 +198,6 @@ def remove_entries(dictionary, dictionary_name, people_dict, drinks_dict):
         for item in removed_data:
             dictionary.remove(item)
     elif isinstance(dictionary, dict):
-        data = update_data("preferences", removed_data, dictionary, ids, "remove")
+        data = update_data(dictionary_name, removed_data, dictionary, ids, "remove")
 
     return data

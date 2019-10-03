@@ -9,7 +9,7 @@ def connect_db():
         environ.get("academyDBuser"),  # username
         environ.get("academyDBpass"),  # password
         environ.get("academyDB"),  # database
-        cursorclass=pymysql.cursors.DictCursor
+        cursorclass=pymysql.cursors.DictCursor # output a dictionary cursor
     )
     return connection
 
@@ -24,6 +24,26 @@ def add_data(table_name, field, data):
         for value in data:
             sql_query = f"INSERT INTO {table_name} ({field}) VALUES (%s);"
             cursor.execute(sql_query, (value,))
+
+        db.commit()
+
+    except Exception as e:
+        print(f"The following exception occurred: {e}")
+
+    finally:
+        cursor.close()
+        db.close()
+
+
+def add_order(person_id, drink_id, round_id):
+
+    db = connect_db()
+
+    cursor = db.cursor()
+
+    try:
+        sql_query = f"INSERT INTO orders (person_id, drink_id, round_id) VALUES (%s, %s, %s);"
+        cursor.execute(sql_query, (person_id, drink_id, round_id))
 
         db.commit()
 
@@ -85,43 +105,28 @@ def remove_data_by_id(table_name, data):
         db.close()
 
 
+def remove_order(person_id, round_id=None):
 
-def get_preferences():
-    pass
+    db = connect_db()
 
-
-'''def initialise_db(db, sql_initialisation_script_path):
     cursor = db.cursor()
-    tables = []
+
     try:
-
-        query_file = open(sql_initialisation_script_path, "r")
-        query = query_file.read()
-
-        print("All queries:", query)
-
-        print("Query:", query)
-
-        cursor.execute(query)
+        sql_query = f"DELETE FROM orders WHERE round_id = {round_id} AND person_id = {person_id};"
+        cursor.execute(sql_query)
 
         db.commit()
 
-        sql_query = "SHOW TABLES"
-
-        cursor.execute(sql_query)
-
-        rows = cursor.fetchall()
-
-        for row in rows:
-            tables.append(row)
-
-        print("DB initialised. The following tables have been created:", tables)
-
     except Exception as e:
-        print(f"The following exception occurred:{e}")
+        print(f"The following exception occurred: {e}")
 
     finally:
-        cursor.close()'''
+        cursor.close()
+        db.close()
+
+
+def get_preferences():
+    pass
 
 
 def make_person_table_from_file(db, filename):
@@ -172,7 +177,6 @@ def add_preferences_from_file(db, filename):
     try:
         for person_id, drink_id in preferences_dictionary.items():
             sql_query = "UPDATE person SET preference=%s WHERE person_id=%s;"
-            print("Person:", person_id, "\tDrink:", drink_id)
             cursor.execute(sql_query, (drink_id, person_id))
 
         db.commit()
@@ -213,6 +217,34 @@ def get_table(table_name, field="*"):
     return table
 
 
+def get_round_id():
+
+    db = connect_db()
+
+    table = 0
+
+    cursor = db.cursor()
+
+    try:
+
+        sql_query = f"select round_id from rounds order by round_id desc limit 1;"
+
+        cursor.execute(sql_query)
+
+        rows = cursor.fetchall()
+
+        table = rows[0]['round_id']
+
+    except Exception as e:
+        print(f"The following exception occurred:{e}")
+
+    finally:
+        cursor.close()
+        db.close()
+
+    return table
+
+
 def table_to_dict(dict_type):
     output_dictionary = {}
     if dict_type == "person":
@@ -230,9 +262,14 @@ def table_to_dict(dict_type):
                 output_dictionary.update({person["person_id"]: person["preference"]})
     elif dict_type == "orders":
         orders = get_table("orders")
+
         for order in orders:
-            if order["active"]:
-                output_dictionary.update({order["person_id"]: order["drink_id"]})
+            current_round = get_round_id()
+            if order["round_id"] != current_round:
+                orders.remove(order)
+
+        for order in orders:
+            output_dictionary.update({order["person_id"]: order["drink_id"]})
     else:
         print("Invalid argument. Please enter string 'people', 'drinks', 'preferences' or 'orders' as an argument")
 

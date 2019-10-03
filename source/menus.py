@@ -76,12 +76,13 @@ def round_menu(menu_options, people_dict, drinks_dict, last_order_dict):
         return
 
     db.add_data("rounds", "brewer_id", [round_instance.brewer_id])
-    db.update_data("rounds", "brewer_id", "active", {round_instance.brewer_id: 1})
+    db.update_data("rounds", "round_id", "active", {db.get_round_id(): 1})
 
     round_instance = round_intro(round_instance, drinks_dict)
 
-    db.add_data("orders", "person_id", round_instance.brewer_id)
-    db.update_data("orders", "person_id", "drink_id", round_instance.orders)
+    brewer_drink = list(round_instance.orders.values())[0]
+
+    db.add_order(round_instance.brewer_id, brewer_drink, db.get_round_id())
 
     while round_instance.active:
         os.system("clear")
@@ -93,7 +94,6 @@ def round_menu(menu_options, people_dict, drinks_dict, last_order_dict):
         os.system("clear")
 
         if editing_choice == 1:
-            # SOMETHING ABOUT DB.UPDATE OR DB.ADD
             round_instance.orders = add_entries(round_instance.orders, "orders", people_dict, drinks_dict)
 
         elif editing_choice == 2:
@@ -106,7 +106,6 @@ def round_menu(menu_options, people_dict, drinks_dict, last_order_dict):
             print("The final order is:\n")
             draw_table("orders", final_order_data, 2)
             last_order_dict = final_order
-            save_to_file("orders", final_order)
 
         else:
             input("Please enter a number from the options given. Press ENTER to try again.")

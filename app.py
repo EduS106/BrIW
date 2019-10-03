@@ -1,4 +1,3 @@
-
 import os
 from source.db_extraction import table_to_dict
 from source.data_viewer import draw_table
@@ -83,9 +82,9 @@ def start_app():
             draw_table("preferences", preferences_data, 2)
             editing_choice = edit_menu(edit_preferences_options)
             if editing_choice == "ADD/CHANGE":
-                preferences_dict = add_entries(preferences_dict, "preference", people_dict, drinks_dict)
+                preferences_dict = add_entries(preferences_dict, "preferences", people_dict, drinks_dict)
             elif editing_choice == "REMOVE":
-                preferences_dict = remove_entries(preferences_dict, "preference", people_dict, drinks_dict)
+                preferences_dict = remove_entries(preferences_dict, "preferences", people_dict, drinks_dict)
 
         elif user_selection == 8:
             os.system("clear")

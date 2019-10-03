@@ -4,6 +4,7 @@ from source.input_cleaner import number_cleaner
 class Round:
     active = True
     orders = {}
+    round_id = 0
     # team must be stored in a teams file/database
 
     def __init__(self, brewer, brewer_id, preferences={}, team=[]):
@@ -63,34 +64,6 @@ Press ENTER to try again or type X to exit: ''')
         last_order = self.orders.copy()
         self.clear_orders()
         return last_order
-
-
-def test_rounds():
-    brewer = input("What is your name?\nName: ")
-    newRound = Round(brewer)
-    newRound.welcome()
-    while newRound.active:
-        user_selection = int(input(f'''What would you like to do? Choose from the following options:
-    
-    ORDER MENU
-{newRound.orders}
-    
-[1] Add/Change
-[2] Remove
-[3] Complete
-    
-Please type the number of your selection: '''))
-        if user_selection == 1:
-            name = input("Order for: ")
-            drink = input("Drink: ")
-            newRound.add_order(name, drink)
-
-        elif user_selection == 2:
-            name = input("Who's order would you like to remove?\nName: ")
-            newRound.remove_order(name)
-
-        elif user_selection == 3:
-            newRound.close_round()
 
 
 #test_rounds()
