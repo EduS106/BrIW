@@ -1,5 +1,3 @@
-use eduardo;
-
 CREATE TABLE drink (
 	drink_id INTEGER AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(100)

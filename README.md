@@ -8,7 +8,9 @@ A Python text application for creating and distributing your coffees and other d
 - Run the command: ```pip install -r requirements.txt```
 	
 ## RUN
-- Run by executing the shell command: ```python3 -m source.app``` while being in the top-level directory (BrIW Folder)
+- The application will only work by using a database. To initialise the tables correctly you must run:
+```mysql -u <username> -p <database_name> < createdb.sql```
+- Run by executing the shell command: ```python3 -m app``` while being in the top-level directory (BrIW Folder)
 - To run the tests, execute the shell command: ```python3 -m tests.brIW_tests``` while being in the top-level directory (BrIW Folder)
 
 ## CONTRIBUTIONS
