@@ -265,12 +265,7 @@ def table_to_dict(dict_type):
 
         current_round = get_round_id()
 
-        print("Current round:", current_round)
-        input(f"Current orders: {orders}")
-
         orders = [order for order in orders if (order['round_id'] == current_round)]
-
-        input(f"Last order: {orders}")
 
         for order in orders:
             output_dictionary.update({order["person_id"]: order["drink_id"]})
