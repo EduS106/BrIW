@@ -59,7 +59,7 @@ def start_app():
             if editing_choice == "ADD":
                 people_dict = add_data("person", people_dict)
             elif editing_choice == "REMOVE":
-                people_dict = remove_data("person", people_dict, preferences=preferences_dict)
+                people_dict = remove_data("person", people_dict)
 
         elif user_selection == 5:
             os.system("clear")
@@ -68,7 +68,7 @@ def start_app():
             if editing_choice == "ADD":
                 drinks_dict = add_data("drink", drinks_dict)
             elif editing_choice == "REMOVE":
-                drinks_dict = remove_data("drink", drinks_dict, preferences=preferences_dict)
+                drinks_dict = remove_data("drink", drinks_dict)
 
         elif user_selection == 6:
             preferences_dict = table_to_dict("preference")

@@ -27,7 +27,7 @@ def add_data(data_name, data):
     return data
 
 
-def remove_data(data_name, data, preferences):
+def remove_data(data_name, data):
 
     os.system("clear")
 
@@ -43,12 +43,12 @@ def remove_data(data_name, data, preferences):
             if item < len(data):
                 removed_data.remove(item)
     elif isinstance(data, dict):
-        data = update_data(data_name, removed_data, data, ids, mode="remove", preferences=preferences)
+        data = update_data(data_name, removed_data, data, ids, mode="remove")
 
     return data
 
 
-def update_data(data_name, input_data, dictionary, ids=[], mode="add", preferences={}):
+def update_data(data_name, input_data, dictionary, ids=[], mode="add"):
 
     if mode == "add":
         for item in input_data:
@@ -60,7 +60,7 @@ def update_data(data_name, input_data, dictionary, ids=[], mode="add", preferenc
         dictionary = db.table_to_dict(data_name)
 
     elif mode == "remove":
-        dictionary = update_data_remove(data_name, input_data, ids, dictionary, preferences)
+        dictionary = update_data_remove(data_name, input_data, ids, dictionary)
 
     return dictionary
 
