@@ -1,3 +1,0 @@
-name = "Eduardo"
-drink = "Coffee"
-print("Name: ", name, ", Favourite Drink: ", drink)

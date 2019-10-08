@@ -10,7 +10,7 @@ def name_choice():
         people = get_table("person", "name")
         people = [person['name'] for person in people]
 
-        return redirect("/choosedrink", item_list=people)
+        return render_template("yourname.html", item_list=people)
 
 
 
