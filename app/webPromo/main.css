@@ -1,0 +1,40 @@
+
+body {
+	background-image: url("iw-background.jpg");
+	background-size: cover;
+	background-repeat: no-repeat;
+	height: 100%;
+	width: 100%;
+	font: calibri;
+}
+
+img {
+	max-width: 30%;
+	max-height: 30%;
+	object-fit: cover;
+}
+
+h1 {
+	color: white;
+	font: calibri;	
+}
+
+h2 {
+	color: white;
+	font: calibri;
+}
+
+p {
+	color: white;
+	font: calibri;
+}
+
+a {
+	color: white;
+	font-size: 24px;
+	font: calibri;
+}
+
+#examples-link {
+	text-align:left;
+}

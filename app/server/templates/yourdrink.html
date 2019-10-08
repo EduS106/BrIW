@@ -1,0 +1,22 @@
+{% extends "template.html" %}
+<body>
+{% block content %}
+<h1> Welcome to BrIW v2.0</h1>
+<h2>What drink would you like?</h2>
+<form id="add-drink-form" method="post">
+    <legend>Add your drink:</legend>
+    <br>
+    <label for="drink-name">Drinks:</label>
+    <input list="drinks" id="drink-name" type="text" name="drink-name" required>
+    <datalist id="drinks">
+        {%for item in item_list%}
+        <option value={{item}}>
+            {%endfor%}
+    </datalist>
+
+    <input id="submit-btn" type="submit" value="Submit">
+</form>
+<script>
+</script>
+</body>
+{% endblock %}

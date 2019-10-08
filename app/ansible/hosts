@@ -1,0 +1,5 @@
+[default]
+127.0.0.1
+
+[ec2]
+52.56.219.19 ansible_user=ubuntu

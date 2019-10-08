@@ -137,3 +137,6 @@ data/*
 
 # Ansible stuff
 ansible/*
+
+# Dockerfiles
+Dockerfile
