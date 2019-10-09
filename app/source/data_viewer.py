@@ -1,4 +1,4 @@
-from source.data_converter import dict_to_list
+from app.source.data_converter import dict_to_list
 
 
 def draw_table(title, data, cols=1):

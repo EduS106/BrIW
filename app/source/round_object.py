@@ -1,4 +1,4 @@
-from source.input_cleaner import number_cleaner
+from app.source.input_cleaner import number_cleaner
 
 
 class Round:

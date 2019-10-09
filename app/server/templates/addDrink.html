@@ -1,0 +1,27 @@
+{% extends "template.html" %}
+{% block content%}
+<form id="add-drink-form" method="post">
+    <legend>Add new drink:</legend>
+    <br>
+    <label for="drink-name">Drink:</label>
+    <input id="drink-name" type="text" name="drink-name" required>
+     <!--
+    <label for="preference-name">Drinks:</label>
+    <input list="drinks" id="preference-name" type="text" name="preference-name" required>
+    <datalist id="drinks">
+        {%for item in item_list%}
+        <option value={{item['drink_id']}}>{{item['name']}}</option>
+            {%endfor%}
+    </datalist>
+    -->
+    <input id="submit-btn" type="submit" value="Add Drink">
+</form>
+{% if success%}
+<p>
+    Successfully added: {{name}}
+</p>
+{% endif %}
+{% if repeated %}
+<p>This drink is already on the list.</p>
+{% endif %}
+{% endblock %}

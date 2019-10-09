@@ -1,0 +1,38 @@
+{% extends "template.html" %}
+{% block content%}
+<form id="add-person-form" method="post">
+    <legend>Add new person:</legend>
+    <br>
+    <label for="person-name">Name:</label>
+    <input id="person-name" type="text" name="person-name" required>
+
+    <label for="preference-name">Drinks:</label>
+    <select list="drinks" id="preference-name" type="text" name="preference-name" required>
+        {% for item in item_list %}
+        <option value={{item['drink_id']}}>{{item['name']|title}}</option>
+            {% endfor %}
+        <option value="None">None</option>
+    </select>
+     <!--
+    <label for="preference-name">Drinks:</label>
+    <input list="drinks" id="preference-name" type="text" name="preference-name" required>
+    <datalist id="drinks">
+        {%for item in item_list%}
+        <option value={{item['drink_id']}}>{{item['name']}}</option>
+            {%endfor%}
+    </datalist>
+    -->
+    <input id="submit-btn" type="submit" value="Add Person">
+</form>
+{% if success%}
+<p>
+    Successfully added: {{name}} with preferred drink: {{preference}}
+</p>
+{% endif %}
+{% if error%}
+<p>Please try again. There was an error with your entry.</p>
+{% endif %}
+{% if repeated %}
+<p>Your name is already on the list.</p>
+{% endif %}
+{% endblock %}

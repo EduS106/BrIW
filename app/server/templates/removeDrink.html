@@ -1,0 +1,23 @@
+{% extends "template.html" %}
+{% block content%}
+<form id="remove-drink-form" method="post">
+    <legend>Remove a drink:</legend>
+    <br>
+    <label for="drink-name">People:</label>
+    <select list="drinks" id="drink-name" type="text" name="drink-name" required>
+        {% for item in item_list %}
+        <option value={{item['drink_id']}}>{{item['name']|title}}</option>
+            {% endfor %}
+    </select>
+
+    <input id="submit-btn" type="submit" value="Remove Drink">
+</form>
+{% if success%}
+<p>
+    Successfully removed: {{name}}
+</p>
+{% endif %}
+{% if error%}
+<p>Please try again. There was an error with your entry.</p>
+{% endif %}
+{% endblock %}

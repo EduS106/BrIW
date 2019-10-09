@@ -1,5 +1,6 @@
 import pymysql
-from source.file_handler import start_dict
+from app.source.input_cleaner import name_cleaner
+from app.source.file_handler import start_dict
 from os import environ
 
 
@@ -125,8 +126,15 @@ def remove_order(person_id, round_id=None):
         db.close()
 
 
-def get_preferences():
-    pass
+def preference_ids_to_name(preference_ids):
+    preferences = []
+    drinks = get_table("drink")
+    for preference_id in preference_ids:
+        for drink in drinks:
+            if preference_id == drink['drink_id']:
+                preferences.append(drink['name'])
+                continue
+    return preferences
 
 
 def make_person_table_from_file(db, filename):

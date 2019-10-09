@@ -37,3 +37,18 @@ def name_cleaner(input_data):
         input_data[index] = item
 
     return input_data
+
+
+def web_name_cleaner(name):
+
+    allowed_characters = [" ", "-"]
+    name = ''.join([character for character in name if character.isalpha() or character in allowed_characters])
+
+    item = name
+    item = item.strip()
+    item = item.strip('"')
+    item = item.strip("'")
+    item = item.title()
+    name = item
+
+    return name

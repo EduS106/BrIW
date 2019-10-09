@@ -1,11 +1,10 @@
 import os
-from source.file_handler import save_to_file
-from source.data_converter import ids_to_data
-from source.data_viewer import draw_table
-import source.db_extraction as db
-from source.data_manipulator import add_entries, remove_entries
-from source.input_cleaner import number_cleaner
-from source.round_object import Round
+from app.source.data_converter import ids_to_data
+from app.source.data_viewer import draw_table
+import app.source.db_extraction as db
+from app.source.data_manipulator import add_entries, remove_entries
+from app.source.input_cleaner import number_cleaner
+from app.source.round_object import Round
 
 
 def draw_menu(menu_options, drawing="", message="Please enter the number of your selection: "):
@@ -196,7 +195,7 @@ Thanks for using our app, hope you have enjoyed the experience!
 Contact us to report bugs, for help or troubleshooting, or just to give us feedback on our app!
 
 Email: thebriwcompany@coffee.com
-Phone: 07180350283
+Phone: 01131337808
 
 Copyright: Eduardo Salazar, 2019"""
 

@@ -4,15 +4,26 @@
         <meta charset="UTF-8">
         <title>
             {# {% block title %}{% endblock %} #}
-            BrIW- The Website
+            BrIW- Coffee 4 All
         </title>
+        <link rel="stylesheet" type="text/css" href="/static/main.css">
     </head>
     <body>
         <header>
             {% block header %}
             {% endblock %}
         </header>
-        <nav></nav>
+        <nav>
+            <div class="logo">
+
+            </div>
+            <div class="topnav">
+                <a href="/">Home</a>
+                <a href="/people">People</a>
+                <a href="/drinks">Drinks</a>
+                <a href="/rounds">Rounds</a>
+            </div>
+        </nav>
         <main>
             {% block content %}
             {% endblock %}
@@ -21,5 +32,9 @@
             {% block footer %}
             {% endblock %}
         </footer>
+        <script>
+            {% block script %}
+            {% endblock %}
+        </script>
     </body>
 </html>

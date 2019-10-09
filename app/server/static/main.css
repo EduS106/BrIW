@@ -1,0 +1,62 @@
+.preference-space {
+    padding: 0 30px 0 30px;
+}
+
+input {
+    margin-right: 30px;
+}
+
+nav {
+    padding: 10px;
+    margin-bottom: 30px;
+    background-color: black;
+}
+
+nav a {
+  padding-right: 50px;
+}
+
+html {
+	background-image: url("assets/iw-background.jpg");
+	background-size: cover;
+	background-repeat: no-repeat;
+	height: 100%;
+	width: 100%;
+	font: calibri;
+	color: white;
+}
+
+img {
+	max-width: 30%;
+	max-height: 30%;
+	object-fit: cover;
+}
+
+h1 {
+	color: white;
+	font: calibri;
+}
+
+h2 {
+	color: white;
+	font: calibri;
+}
+
+p {
+	color: white;
+	font: calibri;
+}
+
+a {
+	color: white;
+	font-size: 24px;
+	font: calibri;
+}
+
+.name {
+    color: white;
+}
+
+#examples-link {
+	text-align:left;
+}

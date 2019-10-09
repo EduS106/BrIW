@@ -1,7 +1,7 @@
-import source.db_extraction as db
-from source.data_viewer import draw_table, draw_selected_people
-from source.input_cleaner import name_cleaner, number_cleaner
-from source.data_converter import ids_to_data
+import app.source.db_extraction as db
+from app.source.data_viewer import draw_table, draw_selected_people
+from app.source.input_cleaner import name_cleaner, number_cleaner
+from app.source.data_converter import ids_to_data
 import os
 
 

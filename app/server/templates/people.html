@@ -1,27 +1,30 @@
 {% extends "template.html" %}
-{% block title %}BrIW- The Website{% endblock %}
     {% block content %}
     <h1> Welcome to BrIW! </h1>
-    <h2> Please select your name from the following options: </h2>
-    <div class="options-box">
+    <h2> The following people have all joined BrIW: </h2>
+    <div class="name-list">
         <table>
-            {%for i in range(item_list|length)%}
-            <tr>
-                <td class="name">{{i+1}}. {{item_list[i]["name"]}}</td>
-            </tr>
-            {%endfor%}
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th></th>
+                    <th>Preferred Drink</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for i in range(table|length)%}
+                <tr>
+                    <td class="name">{{i+1}}. {{table[i]['name']}}</td>
+                    <td class="preference-space">---></td>
+                    <td class="preference">{{drinks[table[i]['preference']]}}</td>
+                </tr>
+                {%endfor%}
+            </tbody>
         </table>
     </div>
-    <script>
-        let clickableItems = document.getElementsByClassName("name")
-        for (let i = 0; i < clickableItems.length; i++) {
-            clickableItem = clickableItems[i]
-            clickableItem.id = i + 1
-            clickableItem.addEventListener('click', whenClicked)
-        }
-
-        function whenClicked(event){
-            alert(`You have clicked! Clicked item was: ${event.target.getAttribute('id')}`)
-        }
-    </script>
+    <div class="buttons">
+        <button type="button" class="add" onclick="location.href = '/people/add';">Add</button>
+        <button type="button" class="remove" onclick="location.href = '/people/remove';">Remove</button>
+        <button type="button" class="change-preference" onclick="location.href = '/people/preferences';">Change Preferences</button>
+    </div>
     {% endblock %}

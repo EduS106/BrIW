@@ -1,6 +1,5 @@
 {% extends "template.html" %}
 <body>
-{% block title %}BrIW-The Website{% endblock %}
 {% block content%}
 <form id="add-person-form" method="post">
     <legend>Add new person:</legend>
@@ -18,6 +17,16 @@
     <input id="submit-btn" type="submit" value="Add Person">
 </form>
 <script>
+    let clickableItems = document.getElementsByClassName("name")
+    for (let i = 0; i < clickableItems.length; i++) {
+        clickableItem = clickableItems[i]
+        clickableItem.id = i + 1
+        clickableItem.addEventListener('click', whenClicked)
+    }
+
+    function whenClicked(event){
+        alert(`You have clicked! Clicked item was: ${event.target.getAttribute('id')}`)
+    }
 </script>
 </body>
 {% endblock %}

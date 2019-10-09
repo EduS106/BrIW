@@ -1,9 +1,9 @@
 import os
-from source.db_extraction import table_to_dict
-from source.data_viewer import draw_table
-from source.menus import draw_menu, draw_brIW, edit_menu, round_menu, exit_screen
-from source.data_manipulator import add_data, remove_data, add_entries, remove_entries
-from source.data_converter import ids_to_data
+from app.source.db_extraction import table_to_dict
+from app.source.data_viewer import draw_table
+from app.source.menus import draw_menu, draw_brIW, edit_menu, round_menu, exit_screen
+from app.source.data_manipulator import add_data, remove_data, add_entries, remove_entries
+from app.source.data_converter import ids_to_data
 
 
 def start_app():

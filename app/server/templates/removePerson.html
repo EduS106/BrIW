@@ -1,0 +1,23 @@
+{% extends "template.html" %}
+{% block content%}
+<form id="remove-person-form" method="post">
+    <legend>Remove a person:</legend>
+    <br>
+    <label for="people-name">People:</label>
+    <select list="people" id="people-name" type="text" name="people-name" required>
+        {% for item in item_list %}
+        <option value={{item['person_id']}}>{{item['name']|title}}</option>
+            {% endfor %}
+    </select>
+
+    <input id="submit-btn" type="submit" value="Remove Person">
+</form>
+{% if success%}
+<p>
+    Successfully removed: {{name}}
+</p>
+{% endif %}
+{% if error%}
+<p>Please try again. There was an error with your entry.</p>
+{% endif %}
+{% endblock %}
