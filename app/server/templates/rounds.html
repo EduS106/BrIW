@@ -1,0 +1,47 @@
+{% extends "template.html" %}
+    {% block content %}
+    <h1> Rounds </h1>
+    {% if round_active|default(false,true) %}
+    <h2> The current round is: </h2>
+    {% else %}
+    <h2> The last order was: </h2>
+    {% endif %}
+    <div class="name-list">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th></th>
+                    <th>Ordered Drink</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for i in range(orders|length)%}
+                <tr>
+                    {% if round_active and i==0 %}
+                    <td class="name">{{i+1}}. {{people[orders[i]['person_id']]}} (Brewer)</td>
+                    {% else %}
+                    <td class="name">{{i+1}}. {{people[orders[i]['person_id']]}}</td>
+                    {% endif %}
+                    <td class="preference-space">---></td>
+                    <td class="preference">{{drinks[orders[i]['drink_id']]}}</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+    <div class="buttons">
+        {% if round_active %}
+        <button type="button" class="start-round" onclick="location.href = '/rounds/add_order';">
+            Add Order
+        </button>
+        <button type="button" class="start-round" onclick="location.href = '/rounds';">
+            Complete Order
+        </button>
+        {% else %}
+        <button type="button" class="start-round" onclick="location.href = '/rounds/start';">
+        Start Round
+        </button>
+        {% endif %}
+    </div>
+    {% endblock %}

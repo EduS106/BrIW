@@ -1,22 +1,41 @@
 {% extends "template.html" %}
-<body>
 {% block content %}
-<h1> Welcome to BrIW v2.0</h1>
+{% if first %}
+<h1> Round Started!</h1>
 <h2>What is your name?</h2>
+{% else %}
+<h1> Ready for another order?</h1>
+<h2>Select a person and their desired drink:</h2>
+{% endif %}
 <form id="add-person-form" method="post">
-    <legend>Add new person:</legend>
-    <br>
-    <label for="person-name">People:</label>
-    <input list="people" id="person-name" type="text" name="person-name" required>
-    <datalist id="people">
-        {%for item in item_list%}
-        <option value={{item}}>
-            {%endfor%}
-    </datalist>
 
-    <a href="yourdrink.html"><input id="submit-btn" type="submit" value="Submit"></a>
+    {% if first %}
+    <legend>Select your name:</legend>
+    {% else %}
+    <legend>Select a name:</legend>
+    {% endif %}
+    <br>
+    <select list="people" id="people-name" type="text" name="people-name" required>
+        {% for person in people %}
+        <option value={{person['person_id']}}>{{person['name']|title}}</option>
+            {% endfor %}
+    </select>
+
+    {% if first %}
+    <legend>Select your drink:</legend>
+    {% else %}
+    <legend>Select a drink:</legend>
+    {% endif %}
+    <br>
+    <select list="drinks" id="drink-name" type="text" name="drink-name" required>
+        {% for drink in drinks %}
+        <option value={{drink['drink_id']}}>{{drink['name']|title}}</option>
+            {% endfor %}
+    </select>
+
+    <div class="buttons">
+        <button type="submit" class="add-order" onclick="location.href ='/rounds/continue';" value="">Add Order</button>
+        <!-- <button type="button" class="add-order" onclick="location.href = '/rounds/remove_order';">Remove Order</button> -->
+    </div>
 </form>
-<script>
-</script>
-</body>
 {% endblock %}

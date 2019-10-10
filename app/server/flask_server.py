@@ -1,5 +1,6 @@
-from app.source.db_extraction import get_table, add_data, update_data, preference_ids_to_name, table_to_dict, remove_data_by_id
+from app.source.db_extraction import get_table, add_data, update_data, preference_ids_to_name, table_to_dict, remove_data_by_id, get_round_id, add_order, get_last_order
 from app.source.input_cleaner import web_name_cleaner
+from app.source.data_converter import ids_to_data
 from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
@@ -142,36 +143,68 @@ def remove_drinks():
 @app.route('/rounds', methods=['GET', 'POST'])
 def rounds_list():
     if request.method == "GET":
-        drinks = get_table("drink")
-        return render_template('rounds.html', item_list=drinks)
+        drinks = table_to_dict("drink")
+        people = table_to_dict("person")
+        last_order = get_last_order()
+        return render_template('rounds.html', people=people, drinks=drinks, orders=last_order)
 
 
 @app.route('/rounds/start', methods=['GET', 'POST'])
-def create_round():
+def createRound():
     if request.method == "GET":
         drinks = get_table("drink")
-        return render_template('create_round.html', item_list=drinks)
+        people = get_table("person")
+        return render_template('yourname.html', people=people, drinks=drinks, first=True)
+
+    elif request.method == "POST":
+        person_id = request.form.get("people-name")
+        drink_id = request.form.get("drink-name")
+        add_data("rounds", "brewer_id", [person_id])
+        round_id = get_round_id()
+        add_order(person_id, drink_id, round_id)
+
+        drinks = table_to_dict("drink")
+        people = table_to_dict("person")
+        last_order = get_last_order()
+
+        return render_template('rounds.html', people=people, drinks=drinks, orders=last_order, round_active=True)
+
+
+@app.route('/rounds/continue', methods=['GET', 'POST'])
+def begin_ordering():
+    if request.method == "GET":
+        drinks = table_to_dict("drink")
+        people = table_to_dict("person")
+        last_order = get_last_order()
+        return render_template('rounds.html', people=people, drinks=drinks, orders=last_order, round_active=True)
+
 
 
 @app.route('/rounds/add_order', methods=['GET', 'POST'])
-def add_order():
+def addOrder():
     if request.method == "GET":
         drinks = get_table("drink")
-        return render_template('add_order.html', item_list=drinks)
+        people = get_table("person")
+        return render_template('yourname.html', people=people, drinks=drinks)
+
+    elif request.method == "POST":
+        person_id = request.form.get("people-name")
+        drink_id = request.form.get("drink-name")
+        round_id = get_round_id()
+        add_order(person_id, drink_id, round_id)
+
+        drinks = table_to_dict("drink")
+        people = table_to_dict("person")
+        last_order = get_last_order()
+
+        return render_template('rounds.html', people=people, drinks=drinks, orders=last_order, round_active=True)
 
 
 @app.route('/rounds/remove_order', methods=['GET', 'POST'])
-def remove_order():
+def removeOrder():
     if request.method == "GET":
-        drinks = get_table("drink")
-        return render_template('remove_order.html', item_list=drinks)
-
-
-@app.route('/rounds/finish', methods=['GET', 'POST'])
-def close_round():
-    if request.method == "GET":
-        drinks = get_table("drink")
-        return render_template('remove_order.html', item_list=drinks)
+        pass
+    pass
 
 
 if __name__ == "__main__":

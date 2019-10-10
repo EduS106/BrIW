@@ -196,6 +196,40 @@ def add_preferences_from_file(db, filename):
         cursor.close()
 
 
+def get_last_order(field="*"):
+
+    db = connect_db()
+
+    table = []
+
+    cursor = db.cursor()
+
+    current_round_id = 1
+
+    if get_table("rounds"):
+        current_round_id = get_round_id()
+
+    try:
+
+        sql_query = f"select {field} from orders where round_id={current_round_id};"
+
+        cursor.execute(sql_query)
+
+        rows = cursor.fetchall()
+
+        for row in rows:
+            table.append(row)
+
+    except Exception as e:
+        print(f"The following exception occurred:{e}")
+
+    finally:
+        cursor.close()
+        db.close()
+
+    return table
+
+
 def get_table(table_name, field="*"):
 
     db = connect_db()
